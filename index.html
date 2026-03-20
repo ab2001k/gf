@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <style>
+        body {
+            margin: 0; padding: 0; font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            text-align: center; overflow-x: hidden; min-height: 100vh;
+        }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-bottom: 100px; }
+        
+        /* Animated Name */
+        h1.magic-name {
+            font-size: 3em;
+            background: linear-gradient(to right, #ff0055, #ff0000, #ff007f, #ff0055);
+            -webkit-background-clip: text; color: transparent;
+            animation: rainbow 3s infinite linear;
+        }
+        @keyframes rainbow { 0% { background-position: 0vw; } 100% { background-position: 100vw; } }
+
+        /* General UI Elements */
+        .card { background: white; border-radius: 20px; padding: 20px; margin: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        button { font-size: 1.2em; padding: 10px 20px; margin: 10px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        .btn-yes { background-color: #4CAF50; color: white; }
+        .btn-yes:hover { transform: scale(1.1); }
+        .btn-no { background-color: #f44336; color: white; position: relative; transition: all 0.3s ease; }
+        .btn-prank { background-color: #2196F3; color: white; }
+        input[type="text"] { font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #ff9a9e; width: 80%; text-align: center;}
+
+        /* Exploding Slider */
+        input[type=range] { width: 100%; margin: 20px 0; }
+        .explosion { font-size: 2em; color: #ff0055; font-weight: bold; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1.5); opacity: 1; } }
+
+        /* Flip Cards */
+        .gifts-grid { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
+        .flip-card { background-color: transparent; width: 100px; height: 100px; perspective: 1000px; margin: 10px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 3em; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .flip-card-front { background-color: #ffb6c1; color: white; }
+        .flip-card-back { background-color: white; transform: rotateY(180deg); }
+
+        /* Floating Balloons */
+        .balloon { position: absolute; font-size: 3em; cursor: pointer; user-select: none; transition: transform 0.1s; }
+    </style>
+</head>
+<body>
+
+    <div id="balloon-container"></div>
+
+    <div class="container">
+        <h1 class="magic-name">Hey Beautiful! ❤️</h1>
+        <p>I made this just for you...</p>
+
+        <div class="card">
+            <h2>Do you love me?</h2>
+            <button class="btn-yes" onclick="alert('I love you more! ❤️')">Big YES!</button>
+            <button class="btn-no" id="runaway-btn">Huh, No</button>
+        </div>
+
+        <div class="card" id="scale-card">
+            <h2>On a scale of 1–10, how cute am I? 😉</h2>
+            <input type="range" min="1" max="10" value="5" id="cute-scale">
+            <p>Slide to the right!</p>
+        </div>
+
+        <div class="card">
+            <h2>Who loves more? Be honest 😜</h2>
+            <button class="btn-prank" onclick="alert('I knew it! You are the best! 💖')">You</button>
+            <button class="btn-prank" id="prank-btn">Me</button>
+        </div>
+
+        <div class="card">
+            <h2>What new nickname should I give you?</h2>
+            <input type="text" placeholder="Type here...">
+        </div>
+
+        <div class="card">
+            <h2>Pick a card for a virtual gift! 🎁</h2>
+            <div class="gifts-grid">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">❓</div>
+                        <div class="flip-card-back">🍫</div>
+                    </div>
+                </div>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">❓</div>
+                        <div class="flip-card-back">💍</div>
+                    </div>
+                </div>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">❓</div>
+                        <div class="flip-card-back">🧸</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Runaway Button Logic (Works on desktop and mobile)
+        const noBtn = document.getElementById('runaway-btn');
+        const moveButton = () => {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${Math.abs(x)}px`;
+            noBtn.style.top = `${Math.abs(y)}px`;
+        };
+        // Trigger on hover for desktop, touch for mobile
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+
+        // 2. Exploding Cute Scale
+        const scale = document.getElementById('cute-scale');
+        const scaleCard = document.getElementById('scale-card');
+        scale.addEventListener('input', (e) => {
+            if (e.target.value == 10) {
+                // Play sound effect (Need actual audio file in production)
+                // let audio = new Audio('pop.mp3'); audio.play();
+                scaleCard.innerHTML = "<div class='explosion'>💥 INFINITY! LOVE OVERLOAD! 💥<br>I know I'm cute, but you are cuter!</div>";
+            }
+        });
+
+        // 3. Prank Button Logic
+        const prankBtn = document.getElementById('prank-btn');
+        prankBtn.addEventListener('click', function() {
+            this.innerText = 'Actually, YOU!';
+            this.style.backgroundColor = '#ff0055';
+            setTimeout(() => alert('Aha! Gotcha! You just admitted I love you more! 😘'), 100);
+        });
+
+        // 4. Clickable Floating Balloons
+        const createBalloon = () => {
+            const balloon = document.createElement('div');
+            balloon.innerHTML = ['🎈', '💖', '✨'][Math.floor(Math.random() * 3)];
+            balloon.className = 'balloon';
+            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.top = Math.random() * 100 + 'vh';
+            
+            // Pop logic
+            balloon.addEventListener('click', function() {
+                this.style.transform = 'scale(0)';
+                setTimeout(() => this.remove(), 100);
+            });
+            document.getElementById('balloon-container').appendChild(balloon);
+        };
+        
+        // Generate a few balloons on load
+        for(let i=0; i<15; i++) createBalloon();
+
+    </script>
+</body>
+</html>
