@@ -28,7 +28,7 @@
         .btn-yes:hover { transform: scale(1.1); }
         .btn-no { background-color: #f44336; color: white; position: relative; transition: all 0.3s ease; }
         .btn-prank { background-color: #2196F3; color: white; }
-        input[type="text"] { font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #ff9a9e; width: 80%; text-align: center;}
+        input[type="text"] { font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #ff9a9e; width: 80%; text-align: center; margin-bottom: 15px;}
 
         /* Exploding Slider */
         input[type=range] { width: 100%; margin: 20px 0; }
@@ -45,15 +45,24 @@
         .flip-card-back { background-color: white; transform: rotateY(180deg); }
 
         /* Floating Balloons */
-        .balloon { position: absolute; font-size: 3em; cursor: pointer; user-select: none; transition: transform 0.1s; }
+        .balloon { position: fixed; font-size: 3em; cursor: pointer; user-select: none; transition: transform 0.1s; z-index: 50;}
     </style>
 </head>
 <body>
 
-    <div id="balloon-container"></div>
+    <div id="setup-screen" style="display: none; padding: 40px; background: white; border-radius: 20px; max-width: 400px; margin: 50px auto; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; z-index: 100;">
+        <h2>Create Her Gift 💝</h2>
+        <p>Enter her name to generate a unique, secure link.</p>
+        <input type="text" id="gf-name-input" placeholder="Enter her name...">
+        <button class="btn-yes" id="generate-btn" style="width: 100%;">Generate Secret Link</button>
+        <div id="link-output" style="margin-top: 20px; font-weight: bold; word-wrap: break-word;"></div>
+    </div>
 
-    <div class="container">
-        <h1 class="magic-name">Hey Beautiful! ❤️</h1>
+    <div id="gift-screen" class="container" style="display: none;">
+        
+        <div id="balloon-container"></div>
+
+        <h1 class="magic-name" id="display-name">Hey Beautiful! ❤️</h1>
         <p>I made this just for you...</p>
 
         <div class="card">
@@ -77,10 +86,13 @@
         <div class="card">
             <h2>What new nickname should I give you?</h2>
             <input type="text" placeholder="Type here...">
+            <br>
+            <button class="btn-yes" onclick="alert('Aww, I love it! 🥰')">Submit</button>
         </div>
 
         <div class="card">
             <h2>Pick a card for a virtual gift! 🎁</h2>
+            <p>(Tap to flip)</p>
             <div class="gifts-grid">
                 <div class="flip-card" onclick="this.classList.toggle('flipped')">
                     <div class="flip-card-inner">
@@ -104,58 +116,151 @@
         </div>
     </div>
 
-    <script>
-        // 1. Runaway Button Logic (Works on desktop and mobile)
-        const noBtn = document.getElementById('runaway-btn');
-        const moveButton = () => {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40);
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = `${Math.abs(x)}px`;
-            noBtn.style.top = `${Math.abs(y)}px`;
+    <script type="module">
+        // 1. Import Firebase using your specified version (12.11.0)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+        // 2. Your specific Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPS64hiv3GL54t6uI-1I9OURK6_k9olXc",
+            authDomain: "lovegiftweb.firebaseapp.com",
+            projectId: "lovegiftweb",
+            storageBucket: "lovegiftweb.firebasestorage.app",
+            messagingSenderId: "1011473402609",
+            appId: "1:1011473402609:web:25384ca95d7e2fb17b7750",
+            measurementId: "G-ZDDSWQMHCL"
         };
-        // Trigger on hover for desktop, touch for mobile
-        noBtn.addEventListener('mouseover', moveButton);
-        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
 
-        // 2. Exploding Cute Scale
-        const scale = document.getElementById('cute-scale');
-        const scaleCard = document.getElementById('scale-card');
-        scale.addEventListener('input', (e) => {
-            if (e.target.value == 10) {
-                // Play sound effect (Need actual audio file in production)
-                // let audio = new Audio('pop.mp3'); audio.play();
-                scaleCard.innerHTML = "<div class='explosion'>💥 INFINITY! LOVE OVERLOAD! 💥<br>I know I'm cute, but you are cuter!</div>";
-            }
-        });
+        // 3. Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
 
-        // 3. Prank Button Logic
-        const prankBtn = document.getElementById('prank-btn');
-        prankBtn.addEventListener('click', function() {
-            this.innerText = 'Actually, YOU!';
-            this.style.backgroundColor = '#ff0055';
-            setTimeout(() => alert('Aha! Gotcha! You just admitted I love you more! 😘'), 100);
-        });
+        // 4. Check URL for the secret ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const giftId = urlParams.get('id');
 
-        // 4. Clickable Floating Balloons
-        const createBalloon = () => {
-            const balloon = document.createElement('div');
-            balloon.innerHTML = ['🎈', '💖', '✨'][Math.floor(Math.random() * 3)];
-            balloon.className = 'balloon';
-            balloon.style.left = Math.random() * 100 + 'vw';
-            balloon.style.top = Math.random() * 100 + 'vh';
+        const setupScreen = document.getElementById('setup-screen');
+        const giftScreen = document.getElementById('gift-screen');
+
+        if (giftId) {
+            // --- VIEW MODE (For Her) ---
+            setupScreen.style.display = 'none';
             
-            // Pop logic
-            balloon.addEventListener('click', function() {
-                this.style.transform = 'scale(0)';
-                setTimeout(() => this.remove(), 100);
-            });
-            document.getElementById('balloon-container').appendChild(balloon);
-        };
-        
-        // Generate a few balloons on load
-        for(let i=0; i<15; i++) createBalloon();
+            async function loadGift() {
+                try {
+                    const docRef = doc(db, "gifts", giftId);
+                    const docSnap = await getDoc(docRef);
 
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        document.getElementById('display-name').innerText = `Hey ${data.name}! ❤️`;
+                        giftScreen.style.display = 'block'; 
+                        
+                        // Start the fun animations only when her screen loads
+                        initInteractiveFeatures();
+                    } else {
+                        document.body.innerHTML = "<h1 style='margin-top:20vh;'>Oops! This link is broken or expired. 💔</h1>";
+                    }
+                } catch (e) {
+                    console.error("Error loading document:", e);
+                    document.body.innerHTML = "<h1 style='margin-top:20vh;'>Error loading the gift. Please make sure Firebase permissions allow reading!</h1>";
+                }
+            }
+            loadGift();
+
+        } else {
+            // --- SETUP MODE (For You) ---
+            setupScreen.style.display = 'block';
+            giftScreen.style.display = 'none';
+
+            document.getElementById('generate-btn').addEventListener('click', async () => {
+                const nameValue = document.getElementById('gf-name-input').value;
+                if (!nameValue) return alert("Please enter her name!");
+
+                const btn = document.getElementById('generate-btn');
+                btn.innerText = "Generating...";
+                btn.disabled = true;
+
+                try {
+                    // Save data to Firebase
+                    const docRef = await addDoc(collection(db, "gifts"), {
+                        name: nameValue,
+                        createdAt: new Date()
+                    });
+
+                    // Create the link
+                    const shareableLink = window.location.href.split('?')[0] + "?id=" + docRef.id;
+                    document.getElementById('link-output').innerHTML = `
+                        <div style="padding: 15px; background: #e8f5e9; border: 1px solid #4CAF50; border-radius: 10px;">
+                            Here is your secure link:<br><br>
+                            <a href="${shareableLink}" target="_blank" style="color: #4CAF50;">${shareableLink}</a>
+                            <br><br><span style="font-size: 0.8em; color: #333;">Copy this and send it to her!</span>
+                        </div>
+                    `;
+                    btn.innerText = "Generate Secret Link";
+                    btn.disabled = false;
+                    document.getElementById('gf-name-input').value = ""; // Clear input
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    alert("Error saving data! Check your Firebase Firestore security rules.");
+                    btn.innerText = "Try Again";
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        // ==========================================
+        // ALL THE FUN ANIMATIONS & INTERACTIONS
+        // ==========================================
+        function initInteractiveFeatures() {
+            // 1. Runaway Button Logic
+            const noBtn = document.getElementById('runaway-btn');
+            const moveButton = () => {
+                const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40);
+                const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40);
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = `${Math.abs(x)}px`;
+                noBtn.style.top = `${Math.abs(y)}px`;
+            };
+            noBtn.addEventListener('mouseover', moveButton);
+            noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+
+            // 2. Exploding Cute Scale
+            const scale = document.getElementById('cute-scale');
+            const scaleCard = document.getElementById('scale-card');
+            scale.addEventListener('input', (e) => {
+                if (e.target.value == 10) {
+                    scaleCard.innerHTML = "<div class='explosion'>💥 INFINITY! LOVE OVERLOAD! 💥<br>I know I'm cute, but you are cuter!</div>";
+                }
+            });
+
+            // 3. Prank Button Logic
+            const prankBtn = document.getElementById('prank-btn');
+            prankBtn.addEventListener('click', function() {
+                this.innerText = 'Actually, YOU!';
+                this.style.backgroundColor = '#ff0055';
+                setTimeout(() => alert('Aha! Gotcha! You just admitted I love you more! 😘'), 100);
+            });
+
+            // 4. Clickable Floating Balloons
+            const createBalloon = () => {
+                const balloon = document.createElement('div');
+                balloon.innerHTML = ['🎈', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
+                balloon.className = 'balloon';
+                balloon.style.left = Math.random() * 90 + 'vw';
+                balloon.style.top = Math.random() * 90 + 'vh';
+                
+                balloon.addEventListener('click', function() {
+                    this.style.transform = 'scale(0)';
+                    setTimeout(() => this.remove(), 100);
+                });
+                document.getElementById('balloon-container').appendChild(balloon);
+            };
+            for(let i=0; i<15; i++) createBalloon();
+        }
     </script>
 </body>
 </html>
