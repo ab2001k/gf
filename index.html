@@ -78,7 +78,7 @@
             font-size: 1em; margin-bottom: 15px; outline: none; transition: 0.3s;
             background: #fff; font-family: inherit; color: #000; font-weight: 500;
         }
-        input:disabled, textarea:disabled { background: #ecf0f1; color: #7f8c8d; }
+        input:disabled, textarea:disabled { background: #ecf0f1; color: #000; font-weight: bold; border-color: #bdc3c7; }
 
         /* --- COPY WIDGETS --- */
         .copy-box {
@@ -89,7 +89,7 @@
         .copy-box a { color: #3498db; text-decoration: none; font-weight: bold; }
         .copy-btn { margin: 0; padding: 8px 15px; font-size: 0.9em; background: #ecf0f1; color: #2c3e50; border-radius: 8px; }
 
-        /* --- TOP TOAST (Admin Denied) --- */
+        /* --- TOP TOAST (Admin Denied & Notifications) --- */
         #top-toast {
             position: fixed; top: -80px; left: 50%; transform: translateX(-50%);
             background: #e74c3c; color: white; padding: 15px 30px; border-radius: 0 0 16px 16px;
@@ -97,6 +97,7 @@
             box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4); text-align: center; width: 90%; max-width: 400px;
         }
         #top-toast.show { top: 0; }
+        .toast-info { background: #3498db !important; box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4) !important; }
 
         /* --- CUSTOM POPUPS --- */
         .modal-overlay {
@@ -109,14 +110,15 @@
             max-width: 350px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #000;
         }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         /* --- INFINITY BURST TEXT --- */
         .burst-text {
-            font-size: 3em; font-weight: 900; color: transparent; margin: 10px 0;
+            font-size: 2.5em; font-weight: 900; color: transparent; margin: 10px 0;
             background: linear-gradient(45deg, #ff0055, #ffaa00, #ff0055); background-size: 200%;
             -webkit-background-clip: text; background-clip: text;
             animation: burstAnim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, gradientShift 2s infinite linear;
-            text-shadow: 0 0 20px rgba(255,0,85,0.3);
+            text-shadow: 0 0 20px rgba(255,0,85,0.3); display: inline-block;
         }
         @keyframes burstAnim { 0% { transform: scale(0) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
@@ -148,10 +150,11 @@
         .flip-card-front { background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: 2px solid white; }
         .flip-card-back { background-color: white; transform: rotateY(180deg); border: 3px solid #ff7eb3;}
 
-        /* Admin Data Area */
+        /* Admin / Data Reading Area (Black Text for Readability) */
         .data-text-area { color: #000; font-weight: 500; }
-        .admin-item { background: rgba(255,255,255,0.95); color: #000; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; border-left: 6px solid #e74c3c; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .admin-item { background: rgba(255,255,255,0.95); color: #000 !important; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; border-left: 6px solid #e74c3c; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .admin-item strong { color: #8e44ad; }
+        .admin-item p { color: #000 !important; margin: 5px 0; }
         .creator-tag { font-size: 0.85em; margin-top: 30px; font-weight: 500; opacity: 0.6; }
         
         /* Navigation area */
@@ -162,7 +165,7 @@
 
     <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg"></audio>
 
-    <div id="top-toast">Admin access denied.</div>
+    <div id="top-toast">Notification</div>
 
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-content">
@@ -210,7 +213,7 @@
             <input type="text" id="check-id" placeholder="Document ID">
             <input type="password" id="check-code" placeholder="Secret Code">
             <button class="btn-secondary" id="fetch-btn" style="width: 100%;">View Answers</button>
-            <div id="answers-output" class="data-text-area" style="margin-top: 20px; text-align:left;"></div>
+            <div id="answers-output" class="data-text-area" style="margin-top: 20px; text-align:left; color:#000;"></div>
         </div>
         
         <p class="creator-tag">Created by <span style="cursor:pointer; font-weight: bold; color: #fff;" onclick="triggerAdmin()">Abhik Dutta</span></p>
@@ -220,8 +223,8 @@
         <div class="glass-card">
             <h2>Admin Master Panel</h2>
             <p>Viewing all database entries.</p>
-            <div id="admin-list" class="data-text-area">Loading users...</div>
-            <button class="btn-primary" onclick="location.reload()" style="width: 100%; margin-top: 20px;">Exit Admin Panel</button>
+            <div id="admin-list" class="data-text-area" style="color:#000;">Loading users...</div>
+            <button class="btn-outline" onclick="location.reload()" style="width: 100%; margin-top: 20px;">Exit Admin Panel</button>
         </div>
     </div>
 
@@ -231,13 +234,13 @@
             <div class="glass-card tint-pink" id="q1-card" style="min-height: 280px;">
                 <h2 id="top-name">Hey!</h2>
                 <p style="font-size: 1.2em; margin-bottom: 30px;">Do you love me?</p>
-                <div id="btn-container" style="position: relative; height: 80px; display: flex; justify-content: center; align-items: center; gap: 30px;">
+                <div id="btn-container" style="position: relative; height: 80px; display: flex; justify-content: center; align-items: center; gap: 40px;">
                     <button class="btn-primary" id="btn-yes">Yes</button>
                     <button class="btn-secondary" id="btn-no" style="position: relative;">No</button>
                 </div>
             </div>
             <div class="nav-buttons">
-                <button class="btn-primary" id="next-1" style="display:none;" onclick="lockAndNext(1, 2)">Continue ➡️</button>
+                <button class="btn-primary" id="next-1" style="display:none;" onclick="lockAndNext(1, 2)">Continue</button>
             </div>
         </div>
 
@@ -246,11 +249,11 @@
                 <h2>How much do you love me?</h2>
                 <p>Be honest!</p>
                 <input type="range" min="1" max="10" value="5" id="cute-scale">
-                <div id="scale-feedback" style="min-height: 60px; font-weight: bold; color: #8e44ad; font-size: 1.2em; display: flex; align-items: center; justify-content: center;"></div>
+                <div id="scale-feedback" style="min-height: 40px; font-weight: bold; color: #8e44ad; font-size: 1.2em;"></div>
             </div>
             <div class="nav-buttons">
-                <button class="btn-outline" onclick="prevSlide(1)">⬅️ Back</button>
-                <button class="btn-primary" id="next-2" style="display:none;" onclick="lockAndNext(2, 3)">Continue ➡️</button>
+                <button class="btn-outline" onclick="prevSlide(1)">Back</button>
+                <button class="btn-primary" id="next-2" style="display:none;" onclick="lockAndNext(2, 3)">Continue</button>
             </div>
         </div>
 
@@ -263,8 +266,8 @@
                 </div>
             </div>
             <div class="nav-buttons">
-                <button class="btn-outline" onclick="prevSlide(2)">⬅️ Back</button>
-                <button class="btn-primary" id="next-3" style="display:none;" onclick="lockAndNext(3, 4)">Continue ➡️</button>
+                <button class="btn-outline" onclick="prevSlide(2)">Back</button>
+                <button class="btn-primary" id="next-3" style="display:none;" onclick="lockAndNext(3, 4)">Continue</button>
             </div>
         </div>
 
@@ -275,8 +278,8 @@
                 <div class="memory-grid" id="memory-board"></div>
             </div>
             <div class="nav-buttons">
-                <button class="btn-outline" onclick="prevSlide(3)">⬅️ Back</button>
-                <button class="btn-primary" id="next-4" style="display:none;" onclick="lockAndNext(4, 5)">Continue ➡️</button>
+                <button class="btn-outline" onclick="prevSlide(3)">Back</button>
+                <button class="btn-primary" id="next-4" style="display:none;" onclick="lockAndNext(4, 5)">Continue</button>
             </div>
         </div>
 
@@ -287,8 +290,8 @@
                 <div class="gift-grid" id="dynamic-gift-grid"></div>
             </div>
             <div class="nav-buttons">
-                <button class="btn-outline" onclick="prevSlide(4)">⬅️ Back</button>
-                <button class="btn-primary" id="next-5" style="display:none;" onclick="lockAndNext(5, 6)">Continue ➡️</button>
+                <button class="btn-outline" onclick="prevSlide(4)">Back</button>
+                <button class="btn-primary" id="next-5" style="display:none;" onclick="lockAndNext(5, 6)">Continue</button>
             </div>
         </div>
 
@@ -298,9 +301,9 @@
                 <p id="note-suggestion" style="color:#8e44ad; font-style:italic; min-height: 25px;">Tell me what you love most about us...</p>
                 <textarea id="her-note" rows="4" placeholder="Type here..."></textarea>
             </div>
-            <div class="nav-buttons">
-                <button class="btn-outline" onclick="prevSlide(5)" id="back-6">⬅️ Back</button>
-                <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Send Message</button>
+            <div class="nav-buttons" id="slide-6-nav">
+                <button class="btn-outline" onclick="prevSlide(5)" id="back-6">Back</button>
+                <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Submit</button>
             </div>
         </div>
 
@@ -310,7 +313,7 @@
                 <p>I received your answers. You are amazing! ❤️</p>
             </div>
             <div class="nav-buttons">
-                <button class="btn-outline" onclick="prevSlide(6)">⬅️ Review Answers</button>
+                <button class="btn-outline" onclick="prevSlide(6)">Review Answers</button>
             </div>
         </div>
 
@@ -373,10 +376,12 @@
         window.showModal = function(text) { document.getElementById('modal-text').innerText = text; document.getElementById('custom-modal').style.display = 'flex'; }
         window.closeModal = function() { document.getElementById('custom-modal').style.display = 'none'; }
         
-        window.showToast = function(msg) {
+        window.showToast = function(msg, isInfo=false) {
             const toast = document.getElementById('top-toast');
-            toast.innerText = msg; toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            toast.innerText = msg; 
+            if(isInfo) toast.classList.add('toast-info'); else toast.classList.remove('toast-info');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
         // ==========================================
@@ -418,16 +423,16 @@
                 querySnapshot.forEach((doc) => {
                     const d = doc.data();
                     html += `
-                    <div class="admin-item" id="entry-${doc.id}">
+                    <div class="admin-item" id="entry-${doc.id}" style="color:#000;">
                         <button class="btn-secondary" onclick="deleteEntry('${doc.id}', false)" style="float:right; padding: 8px 12px; font-size: 0.8em; margin:0;">🗑️ Delete</button>
                         <strong>Name:</strong> ${d.name} <br>
                         <strong>Link Code:</strong> ${doc.id} <br>
                         <strong>Finished:</strong> ${d.completed ? '✅ Yes' : '⏳ No'}<br>
                         ${d.completed ? `
                             <hr style="border:0; border-top:1px solid #ccc; margin: 8px 0;">
-                            <strong>Gift:</strong> ${d.answers.chosenGift} <br>
-                            <strong>Loves me:</strong> ${d.answers.lovesMe ? 'Yes' : 'No'} (Scale: ${d.answers.loveScale}/10)<br>
-                            <strong>Message:</strong> <i>"${d.answers.note}"</i>
+                            <p><strong>Gift:</strong> ${d.answers.chosenGift}</p>
+                            <p><strong>Loves me:</strong> ${d.answers.lovesMe ? 'Yes' : 'No'} (Scale: ${d.answers.loveScale}/10)</p>
+                            <p><strong>Message:</strong> <i>"${d.answers.note}"</i></p>
                         ` : ''}
                     </div>`;
                 });
@@ -439,7 +444,7 @@
             if(confirm("Are you sure you want to permanently delete this data?")) {
                 try {
                     await deleteDoc(doc(db, "gifts", docId));
-                    showToast("Data deleted successfully!");
+                    showToast("Data deleted successfully!", true);
                     if(isUserDashboard) document.getElementById('answers-output').innerHTML = "";
                     else document.getElementById('entry-' + docId).remove();
                 } catch(e) { showToast("Error deleting data."); }
@@ -456,6 +461,13 @@
                     const docSnap = await getDoc(doc(db, "gifts", giftId));
                     if (docSnap.exists()) {
                         const data = docSnap.data();
+                        
+                        // IF ALREADY COMPLETED -> VIEW ONLY MODE
+                        if(data.completed) {
+                            enableReviewMode(data);
+                            return; 
+                        }
+
                         document.getElementById('top-name').innerText = `Hey ${data.name}!`;
                         document.getElementById('gift-panel').style.display = 'block';
                         initHerInteractions();
@@ -464,6 +476,7 @@
             }
             loadGift();
         } else {
+            // CREATOR DASHBOARD VIEW
             document.getElementById('generate-btn').addEventListener('click', async () => {
                 const nameValue = document.getElementById('gf-name-input').value;
                 if (!nameValue) return showModal("Please enter their name!");
@@ -502,6 +515,63 @@
         }
 
         // ==========================================
+        // VIEW ONLY / REVIEW MODE LOGIC
+        // ==========================================
+        function enableReviewMode(data) {
+            document.getElementById('top-name').innerText = `Hey ${data.name}!`;
+            document.getElementById('gift-panel').style.display = 'block';
+            
+            // Slide 1
+            document.getElementById('btn-container').innerHTML = `<button class="btn-primary" disabled>Yes</button>`;
+            document.getElementById('next-1').style.display = 'inline-block';
+            document.getElementById('next-1').onclick = () => nextSlide(2);
+
+            // Slide 2
+            document.getElementById('cute-scale').value = data.answers.loveScale;
+            document.getElementById('cute-scale').disabled = true;
+            document.getElementById('scale-feedback').innerHTML = "Answered: " + (data.answers.loveScale == 10 ? "<span class='burst-text'>INFINITY! 💥</span>" : data.answers.loveScale);
+            document.getElementById('next-2').style.display = 'inline-block';
+            document.getElementById('next-2').onclick = () => nextSlide(3);
+
+            // Slide 3
+            document.getElementById('btn-you').disabled = true;
+            document.getElementById('prank-btn').disabled = true;
+            document.getElementById('prank-btn').innerText = 'Actually, YOU!'; 
+            document.getElementById('prank-btn').style.backgroundColor = '#e74c3c';
+            document.getElementById('next-3').style.display = 'inline-block';
+            document.getElementById('next-3').onclick = () => nextSlide(4);
+
+            // Slide 4
+            document.getElementById('memory-board').innerHTML = "<div style='grid-column: span 4; font-size: 1.5em; font-weight: bold; color: #8e44ad;'>Puzzle Solved! 🧩</div>";
+            document.getElementById('next-4').style.display = 'inline-block';
+            document.getElementById('next-4').onclick = () => nextSlide(5);
+
+            // Slide 5
+            document.getElementById('dynamic-gift-grid').innerHTML = `
+                <div class="flip-card selected" style="pointer-events:none;">
+                    <div class="flip-card-inner" style="transform: rotateY(180deg);">
+                        <div class="flip-card-back">${data.answers.chosenGift}</div>
+                    </div>
+                </div>`;
+            document.getElementById('next-5').style.display = 'inline-block';
+            document.getElementById('next-5').onclick = () => nextSlide(6);
+
+            // Slide 6
+            document.getElementById('her-note').value = data.answers.note;
+            document.getElementById('her-note').disabled = true;
+            document.getElementById('submit-btn').style.display = 'none'; // Hide submit button
+            
+            // Add Continue button to slide 6 to view slide 7
+            let slide6Nav = document.getElementById('slide-6-nav');
+            if(!document.getElementById('next-6')) {
+                slide6Nav.innerHTML += `<button class="btn-primary" id="next-6" onclick="nextSlide(7)">Continue</button>`;
+            }
+            
+            showToast("Viewing saved answers. Editing is disabled.", true);
+            setInterval(spawnBalloon, 2000);
+        }
+
+        // ==========================================
         // END USER NAVIGATION & LOCKING
         // ==========================================
         window.nextSlide = function(num) {
@@ -513,7 +583,7 @@
             document.getElementById('slide-' + num).classList.add('active');
         }
         
-        // Locks inputs when moving to the next slide
+        // Locks inputs when moving to the next slide (Only used during active play)
         window.lockAndNext = function(currentSlideNum, nextSlideNum) {
             if(currentSlideNum === 1) { document.getElementById('btn-yes').disabled = true; document.getElementById('btn-no').disabled = true; }
             if(currentSlideNum === 2) document.getElementById('cute-scale').disabled = true;
@@ -536,7 +606,7 @@
                 partnerAnswers.lovesMe = true; showModal('I love you more! Now click Continue.');
                 document.getElementById('next-1').style.display = 'inline-block';
                 noBtn.style.position = 'relative'; noBtn.style.left = '0'; noBtn.style.top = '0'; // Snap back
-                noBtn.onclick = () => showModal("You have already clicked Yes! 😜");
+                noBtn.onclick = () => showModal("You already clicked Yes! 😜");
                 noBtn.onmouseover = null; 
             });
 
@@ -575,9 +645,10 @@
 
             initMemoryGame(); generateRandomGifts();
 
+            // Note Suggestions (SLOWED DOWN to 6 seconds)
             const suggestions = ["Tell me what you love most about us...", "What's your favorite memory of us?", "Write a tiny love letter here..."];
             let sugIdx = 0;
-            setInterval(() => { sugIdx = (sugIdx + 1) % suggestions.length; document.getElementById('note-suggestion').innerText = suggestions[sugIdx]; }, 3000);
+            setInterval(() => { sugIdx = (sugIdx + 1) % suggestions.length; document.getElementById('note-suggestion').innerText = suggestions[sugIdx]; }, 6000);
         }
 
         function initMemoryGame() {
@@ -646,10 +717,16 @@
             document.getElementById('back-6').style.display = 'none'; // Prevent backing out during send
             try {
                 await updateDoc(doc(db, "gifts", currentGiftId), { completed: true, answers: partnerAnswers });
+                
+                // Switch to review mode visually
+                let slide6Nav = document.getElementById('slide-6-nav');
+                slide6Nav.innerHTML += `<button class="btn-primary" id="next-6" onclick="nextSlide(7)">Continue</button>`;
+                document.getElementById('submit-btn').style.display = 'none';
+                
                 nextSlide(7);
             } catch (error) {
                 showModal("Oops, couldn't send! Check your internet connection.");
-                btn.innerText = "Send Message"; btn.disabled = false; document.getElementById('her-note').disabled = false;
+                btn.innerText = "Submit"; btn.disabled = false; document.getElementById('her-note').disabled = false;
                 document.getElementById('back-6').style.display = 'inline-block';
             }
         }
