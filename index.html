@@ -55,21 +55,30 @@
         .bg-dashboard h2, .bg-dashboard p { color: white !important; }
         h2 { color: #8e44ad; font-weight: 600; margin-top: 0; }
         
+        /* UNIFIED BUTTON STYLES */
         button {
-            font-size: 1.1em; padding: 12px 28px; margin: 10px; border: none; border-radius: 12px;
+            font-size: 1.1em; padding: 12px 28px; margin: 5px; border: none; border-radius: 12px;
             cursor: pointer; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-family: inherit;
         }
-        .btn-primary { background: #8e44ad; color: white; } 
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(142, 68, 173, 0.4); }
-        .btn-secondary { background: #e74c3c; color: white; } 
-        .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4); }
-        .btn-outline { background: transparent; border: 2px solid #8e44ad; color: #8e44ad; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
         
+        .btn-primary { background: #8e44ad; color: white; } 
+        .btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(142, 68, 173, 0.4); }
+        
+        .btn-secondary { background: #e74c3c; color: white; } 
+        .btn-secondary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4); }
+        
+        .btn-outline { background: rgba(255,255,255,0.8); border: 2px solid #8e44ad; color: #8e44ad; }
+        .btn-outline:not(:disabled):hover { background: #8e44ad; color: white; }
+        
+        /* Form Inputs */
         input[type="text"], textarea, input[type="password"] {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #dcdde1;
             font-size: 1em; margin-bottom: 15px; outline: none; transition: 0.3s;
             background: #fff; font-family: inherit; color: #000; font-weight: 500;
         }
+        input:disabled, textarea:disabled { background: #ecf0f1; color: #7f8c8d; }
 
         /* --- COPY WIDGETS --- */
         .copy-box {
@@ -79,6 +88,15 @@
         }
         .copy-box a { color: #3498db; text-decoration: none; font-weight: bold; }
         .copy-btn { margin: 0; padding: 8px 15px; font-size: 0.9em; background: #ecf0f1; color: #2c3e50; border-radius: 8px; }
+
+        /* --- TOP TOAST (Admin Denied) --- */
+        #top-toast {
+            position: fixed; top: -80px; left: 50%; transform: translateX(-50%);
+            background: #e74c3c; color: white; padding: 15px 30px; border-radius: 0 0 16px 16px;
+            font-weight: bold; z-index: 2000; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4); text-align: center; width: 90%; max-width: 400px;
+        }
+        #top-toast.show { top: 0; }
 
         /* --- CUSTOM POPUPS --- */
         .modal-overlay {
@@ -91,7 +109,17 @@
             max-width: 350px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #000;
         }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* --- INFINITY BURST TEXT --- */
+        .burst-text {
+            font-size: 3em; font-weight: 900; color: transparent; margin: 10px 0;
+            background: linear-gradient(45deg, #ff0055, #ffaa00, #ff0055); background-size: 200%;
+            -webkit-background-clip: text; background-clip: text;
+            animation: burstAnim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, gradientShift 2s infinite linear;
+            text-shadow: 0 0 20px rgba(255,0,85,0.3);
+        }
+        @keyframes burstAnim { 0% { transform: scale(0) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
         /* --- BALLOONS --- */
         .balloon {
@@ -120,16 +148,21 @@
         .flip-card-front { background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: 2px solid white; }
         .flip-card-back { background-color: white; transform: rotateY(180deg); border: 3px solid #ff7eb3;}
 
-        /* Admin / Data Reading Area (Black Text for Readability) */
+        /* Admin Data Area */
         .data-text-area { color: #000; font-weight: 500; }
         .admin-item { background: rgba(255,255,255,0.95); color: #000; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; border-left: 6px solid #e74c3c; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .admin-item strong { color: #8e44ad; }
         .creator-tag { font-size: 0.85em; margin-top: 30px; font-weight: 500; opacity: 0.6; }
+        
+        /* Navigation area */
+        .nav-buttons { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
     </style>
 </head>
 <body class="bg-dashboard" oncontextmenu="return false;">
 
     <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg"></audio>
+
+    <div id="top-toast">Admin access denied.</div>
 
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-content">
@@ -188,7 +221,7 @@
             <h2>Admin Master Panel</h2>
             <p>Viewing all database entries.</p>
             <div id="admin-list" class="data-text-area">Loading users...</div>
-            <button class="btn-outline" onclick="location.reload()" style="width: 100%;">Exit Admin</button>
+            <button class="btn-primary" onclick="location.reload()" style="width: 100%; margin-top: 20px;">Exit Admin Panel</button>
         </div>
     </div>
 
@@ -198,12 +231,14 @@
             <div class="glass-card tint-pink" id="q1-card" style="min-height: 280px;">
                 <h2 id="top-name">Hey!</h2>
                 <p style="font-size: 1.2em; margin-bottom: 30px;">Do you love me?</p>
-                <div id="btn-container" style="position: relative; height: 80px; display: flex; justify-content: center; align-items: center; gap: 40px;">
+                <div id="btn-container" style="position: relative; height: 80px; display: flex; justify-content: center; align-items: center; gap: 30px;">
                     <button class="btn-primary" id="btn-yes">Yes</button>
                     <button class="btn-secondary" id="btn-no" style="position: relative;">No</button>
                 </div>
             </div>
-            <button class="btn-outline" id="next-1" style="display:none;" onclick="nextSlide(2)">Continue</button>
+            <div class="nav-buttons">
+                <button class="btn-primary" id="next-1" style="display:none;" onclick="lockAndNext(1, 2)">Continue ➡️</button>
+            </div>
         </div>
 
         <div class="slide" id="slide-2">
@@ -211,20 +246,26 @@
                 <h2>How much do you love me?</h2>
                 <p>Be honest!</p>
                 <input type="range" min="1" max="10" value="5" id="cute-scale">
-                <div id="scale-feedback" style="min-height: 40px; font-weight: bold; color: #8e44ad; font-size: 1.2em;"></div>
+                <div id="scale-feedback" style="min-height: 60px; font-weight: bold; color: #8e44ad; font-size: 1.2em; display: flex; align-items: center; justify-content: center;"></div>
             </div>
-            <button class="btn-primary" id="next-2" style="display:none;" onclick="nextSlide(3)">Submit Answer</button>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prevSlide(1)">⬅️ Back</button>
+                <button class="btn-primary" id="next-2" style="display:none;" onclick="lockAndNext(2, 3)">Continue ➡️</button>
+            </div>
         </div>
 
         <div class="slide" id="slide-3">
             <div class="glass-card tint-green">
                 <h2>Who loves more?</h2>
                 <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-                    <button class="btn-primary" onclick="showModal('I knew it! You are the best! 💖'); nextSlide(4);">You</button>
+                    <button class="btn-primary" id="btn-you" onclick="showModal('I knew it! You are the best! 💖'); document.getElementById('next-3').style.display = 'inline-block';">You</button>
                     <button class="btn-primary" id="prank-btn">Me</button>
                 </div>
             </div>
-            <button class="btn-outline" id="next-3" style="display:none;" onclick="nextSlide(4)">Continue</button>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prevSlide(2)">⬅️ Back</button>
+                <button class="btn-primary" id="next-3" style="display:none;" onclick="lockAndNext(3, 4)">Continue ➡️</button>
+            </div>
         </div>
 
         <div class="slide" id="slide-4">
@@ -233,17 +274,22 @@
                 <p>Match the pairs to prove we are a perfect match.</p>
                 <div class="memory-grid" id="memory-board"></div>
             </div>
-            <button class="btn-outline" id="next-4" style="display:none;" onclick="nextSlide(5)">Continue</button>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prevSlide(3)">⬅️ Back</button>
+                <button class="btn-primary" id="next-4" style="display:none;" onclick="lockAndNext(4, 5)">Continue ➡️</button>
+            </div>
         </div>
 
         <div class="slide" id="slide-5">
             <div class="glass-card tint-purple">
                 <h2>Pick your virtual gift!</h2>
                 <p>Tap a card to reveal. You can only pick ONE!</p>
-                <div class="gift-grid" id="dynamic-gift-grid">
-                    </div>
+                <div class="gift-grid" id="dynamic-gift-grid"></div>
             </div>
-            <button class="btn-outline" id="next-5" style="display:none;" onclick="nextSlide(6)">Continue</button>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prevSlide(4)">⬅️ Back</button>
+                <button class="btn-primary" id="next-5" style="display:none;" onclick="lockAndNext(5, 6)">Continue ➡️</button>
+            </div>
         </div>
 
         <div class="slide" id="slide-6">
@@ -252,7 +298,10 @@
                 <p id="note-suggestion" style="color:#8e44ad; font-style:italic; min-height: 25px;">Tell me what you love most about us...</p>
                 <textarea id="her-note" rows="4" placeholder="Type here..."></textarea>
             </div>
-            <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Send Message</button>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prevSlide(5)" id="back-6">⬅️ Back</button>
+                <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Send Message</button>
+            </div>
         </div>
 
         <div class="slide" id="slide-7">
@@ -260,13 +309,15 @@
                 <h2>All Done! 🎉</h2>
                 <p>I received your answers. You are amazing! ❤️</p>
             </div>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prevSlide(6)">⬅️ Review Answers</button>
+            </div>
         </div>
 
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        // Import deleteDoc and getDocs
         import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -286,31 +337,25 @@
         let partnerAnswers = { lovesMe: false, loveScale: 5, chosenGift: '', note: '' };
         let currentGiftId = giftId;
 
-        // --- Animated Stars Generator ---
+        // --- Animated Stars ---
         function generateStars() {
             for(let i=0; i<40; i++){
-                let star = document.createElement('div');
-                star.className = 'star';
-                let size = Math.random() * 4 + 1;
-                star.style.width = size + 'px'; star.style.height = size + 'px';
-                star.style.left = Math.random() * 100 + 'vw';
-                star.style.top = Math.random() * 100 + 'vh';
-                star.style.animationDuration = (Math.random() * 2 + 1) + 's';
-                star.style.animationDelay = Math.random() + 's';
+                let star = document.createElement('div'); star.className = 'star';
+                let size = Math.random() * 4 + 1; star.style.width = size + 'px'; star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDuration = (Math.random() * 2 + 1) + 's'; star.style.animationDelay = Math.random() + 's';
                 document.body.appendChild(star);
             }
         }
-        generateStars(); // Run on both admin and user sides
+        generateStars();
 
         // --- Audio Synth ---
         window.playClick = function() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator(); const gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.type = 'sine'; osc.frequency.value = 800;
-                gain.gain.setValueAtTime(0.03, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+                osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.value = 800;
+                gain.gain.setValueAtTime(0.03, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
                 osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.05);
             } catch(e) {} 
         }
@@ -321,25 +366,34 @@
         // --- Utilities ---
         window.copyText = function(elementId, btnElement) {
             let text = document.getElementById(elementId).tagName === 'A' ? document.getElementById(elementId).href : document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text);
-            const originalText = btnElement.innerHTML;
+            navigator.clipboard.writeText(text); const originalText = btnElement.innerHTML;
             btnElement.innerHTML = "✅ Copied!"; btnElement.style.background = "#2ed573"; btnElement.style.color = "white";
             setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.background = "#ecf0f1"; btnElement.style.color = "#2c3e50"; }, 2000);
         }
-
         window.showModal = function(text) { document.getElementById('modal-text').innerText = text; document.getElementById('custom-modal').style.display = 'flex'; }
         window.closeModal = function() { document.getElementById('custom-modal').style.display = 'none'; }
-        window.closeAdminModal = function() { document.getElementById('admin-login-modal').style.display = 'none'; document.getElementById('admin-pwd').value = ''; }
+        
+        window.showToast = function(msg) {
+            const toast = document.getElementById('top-toast');
+            toast.innerText = msg; toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
 
         // ==========================================
-        // ADMIN / DELETE LOGIC (7 Clicks)
+        // ADMIN / DELETE LOGIC (7 Clicks, 5 Min Lockout)
         // ==========================================
-        let adminClicks = 0; let clickTimer;
+        let adminClicks = 0; let clickTimer; let adminBlockedUntil = 0;
+        window.closeAdminModal = function() { document.getElementById('admin-login-modal').style.display = 'none'; document.getElementById('admin-pwd').value = ''; }
+        
         window.triggerAdmin = function() {
+            if(Date.now() < adminBlockedUntil) {
+                const mins = Math.ceil((adminBlockedUntil - Date.now()) / 60000);
+                showToast(`Admin access blocked. Try again in ${mins} min(s).`);
+                return;
+            }
             adminClicks++; clearTimeout(clickTimer);
             if(adminClicks === 7) {
-                adminClicks = 0;
-                document.getElementById('admin-login-modal').style.display = 'flex';
+                adminClicks = 0; document.getElementById('admin-login-modal').style.display = 'flex';
             } else { clickTimer = setTimeout(() => { adminClicks = 0; }, 1000); }
         }
 
@@ -351,8 +405,9 @@
                 document.getElementById('admin-panel').style.display = 'block';
                 loadAdminData();
             } else {
-                showModal("Incorrect Password!");
-                document.getElementById('admin-pwd').value = '';
+                adminBlockedUntil = Date.now() + 5 * 60 * 1000; // 5 minute block
+                closeAdminModal();
+                showToast("Admin access denied. Blocked for 5 minutes.");
             }
         }
 
@@ -380,18 +435,14 @@
             } catch(e) { document.getElementById('admin-list').innerHTML = "Error loading database."; }
         }
 
-        // Global Delete Function (used by both Admin and Setup Panel)
         window.deleteEntry = async function(docId, isUserDashboard) {
             if(confirm("Are you sure you want to permanently delete this data?")) {
                 try {
                     await deleteDoc(doc(db, "gifts", docId));
-                    showModal("Data deleted successfully!");
-                    if(isUserDashboard) {
-                        document.getElementById('answers-output').innerHTML = ""; // Clear screen
-                    } else {
-                        document.getElementById('entry-' + docId).remove(); // Remove from admin list
-                    }
-                } catch(e) { showModal("Error deleting data."); }
+                    showToast("Data deleted successfully!");
+                    if(isUserDashboard) document.getElementById('answers-output').innerHTML = "";
+                    else document.getElementById('entry-' + docId).remove();
+                } catch(e) { showToast("Error deleting data."); }
             }
         }
 
@@ -399,10 +450,7 @@
         // INITIALIZATION
         // ==========================================
         if (giftId) {
-            // END USER VIEW
-            document.body.className = "bg-gift"; 
-            document.getElementById('setup-panel').style.display = 'none';
-            
+            document.body.className = "bg-gift"; document.getElementById('setup-panel').style.display = 'none';
             async function loadGift() {
                 try {
                     const docSnap = await getDoc(doc(db, "gifts", giftId));
@@ -416,36 +464,28 @@
             }
             loadGift();
         } else {
-            // CREATOR DASHBOARD VIEW
             document.getElementById('generate-btn').addEventListener('click', async () => {
                 const nameValue = document.getElementById('gf-name-input').value;
                 if (!nameValue) return showModal("Please enter their name!");
                 const secretCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-
                 try {
                     const docRef = await addDoc(collection(db, "gifts"), { name: nameValue, creatorCode: secretCode, completed: false, answers: {} });
                     const link = window.location.href.split('?')[0] + "?id=" + docRef.id;
-                    
-                    const urlEl = document.getElementById('generated-url');
-                    urlEl.innerText = link; urlEl.href = link; 
+                    const urlEl = document.getElementById('generated-url'); urlEl.innerText = link; urlEl.href = link; 
                     document.getElementById('generated-code').innerText = secretCode;
                     document.getElementById('generated-id').innerText = docRef.id;
-                    document.getElementById('link-output').style.display = 'block';
-                    document.getElementById('gf-name-input').value = '';
+                    document.getElementById('link-output').style.display = 'block'; document.getElementById('gf-name-input').value = '';
                 } catch (e) { showModal("Error saving data! Check database rules."); }
             });
 
             document.getElementById('fetch-btn').addEventListener('click', async () => {
-                const id = document.getElementById('check-id').value;
-                const codeInput = document.getElementById('check-code').value;
+                const id = document.getElementById('check-id').value; const codeInput = document.getElementById('check-code').value;
                 if(!id || !codeInput) return showModal("Need both ID and Code!");
-
                 try {
                     const docSnap = await getDoc(doc(db, "gifts", id));
                     if (docSnap.exists() && docSnap.data().creatorCode === codeInput) {
                         const data = docSnap.data();
                         if(!data.completed) return showModal("They haven't finished answering yet!");
-                        
                         let ans = data.answers;
                         document.getElementById('answers-output').innerHTML = `
                             <div class="admin-item" style="color:#000;">
@@ -455,19 +495,30 @@
                                 <p><strong>Their Note:</strong> "${ans.note}"</p>
                                 <hr style="border:0; border-top:1px solid #ccc; margin: 15px 0;">
                                 <button class="btn-secondary" onclick="deleteEntry('${id}', true)" style="width:100%; font-size:1em;">🗑️ Delete This Link Data</button>
-                            </div>
-                        `;
-                    } else { showModal("Invalid Document ID or Secret Code."); }
+                            </div>`;
+                    } else { showToast("Invalid Document ID or Secret Code."); }
                 } catch (e) { showModal("Error fetching data."); }
             });
         }
 
         // ==========================================
-        // END USER INTERACTIONS
+        // END USER NAVIGATION & LOCKING
         // ==========================================
         window.nextSlide = function(num) {
             document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
             document.getElementById('slide-' + num).classList.add('active');
+        }
+        window.prevSlide = function(num) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById('slide-' + num).classList.add('active');
+        }
+        
+        // Locks inputs when moving to the next slide
+        window.lockAndNext = function(currentSlideNum, nextSlideNum) {
+            if(currentSlideNum === 1) { document.getElementById('btn-yes').disabled = true; document.getElementById('btn-no').disabled = true; }
+            if(currentSlideNum === 2) document.getElementById('cute-scale').disabled = true;
+            if(currentSlideNum === 3) { document.getElementById('btn-you').disabled = true; document.getElementById('prank-btn').disabled = true; }
+            nextSlide(nextSlideNum);
         }
 
         function initHerInteractions() {
@@ -485,60 +536,55 @@
                 partnerAnswers.lovesMe = true; showModal('I love you more! Now click Continue.');
                 document.getElementById('next-1').style.display = 'inline-block';
                 noBtn.style.position = 'relative'; noBtn.style.left = '0'; noBtn.style.top = '0'; // Snap back
-                noBtn.onclick = () => showModal("Too late! You already said YES!");
+                noBtn.onclick = () => showModal("You have already clicked Yes! 😜");
                 noBtn.onmouseover = null; 
             });
 
             const moveNoBtn = () => {
                 if(partnerAnswers.lovesMe) return;
                 const maxX = btnContainer.offsetWidth - noBtn.offsetWidth;
-                const maxY = 180; 
+                const maxY = 150; 
                 const x = Math.random() * maxX; const y = (Math.random() * maxY) - (maxY/2); 
                 noBtn.style.position = 'absolute'; noBtn.style.left = `${x}px`; noBtn.style.top = `${y}px`;
             };
             noBtn.onmouseover = moveNoBtn; noBtn.ontouchstart = (e) => { e.preventDefault(); moveNoBtn(); };
 
-            // 2. Instant Submit Slider Logic
+            // 2. Instant Submit Slider & Infinity Burst
             document.getElementById('cute-scale').addEventListener('input', (e) => {
-                const val = e.target.value;
-                partnerAnswers.loveScale = val;
+                const val = e.target.value; partnerAnswers.loveScale = val;
                 let msg = "";
                 if(val < 4) msg = "Ouch... just " + val + "? 😢";
                 else if(val < 8) msg = "I'll take a " + val + "! 😊";
                 else if(val < 10) msg = "A solid " + val + "! 🥰";
-                else msg = "<span style='color:#e74c3c;'>INFINITY! 💥</span>";
+                else msg = "<div class='burst-text'>INFINITY! 💥</div>";
                 
                 document.getElementById('scale-feedback').innerHTML = msg;
                 document.getElementById('next-2').style.display = 'inline-block';
             });
 
-            // 3. Prank Button Logic
+            // 3. Prank Button (3.5s Delay)
             document.getElementById('prank-btn').addEventListener('click', function() {
+                if(this.dataset.clicked) return;
+                this.dataset.clicked = true;
                 this.innerText = 'Actually, YOU!'; this.style.backgroundColor = '#e74c3c';
-                setTimeout(() => { showModal('Gotcha! You just admitted I love you more!'); document.getElementById('next-3').style.display = 'inline-block'; }, 100);
+                setTimeout(() => { 
+                    showModal('Gotcha! You just admitted I love you more! 😜'); 
+                    document.getElementById('next-3').style.display = 'inline-block'; 
+                }, 3500);
             });
 
-            initMemoryGame();
-            generateRandomGifts();
+            initMemoryGame(); generateRandomGifts();
 
-            // Note Suggestions
             const suggestions = ["Tell me what you love most about us...", "What's your favorite memory of us?", "Write a tiny love letter here..."];
             let sugIdx = 0;
-            setInterval(() => {
-                sugIdx = (sugIdx + 1) % suggestions.length;
-                document.getElementById('note-suggestion').innerText = suggestions[sugIdx];
-            }, 3000);
+            setInterval(() => { sugIdx = (sugIdx + 1) % suggestions.length; document.getElementById('note-suggestion').innerText = suggestions[sugIdx]; }, 3000);
         }
 
         function initMemoryGame() {
-            const board = document.getElementById('memory-board');
-            let emojis = ['🍎', '🍎', '🐶', '🐶', '🚗', '🚗', '🎈', '🎈'];
-            emojis.sort(() => 0.5 - Math.random());
-            let flippedCards = []; let matchedCount = 0;
-
+            const board = document.getElementById('memory-board'); let emojis = ['🍎', '🍎', '🐶', '🐶', '🚗', '🚗', '🎈', '🎈'];
+            emojis.sort(() => 0.5 - Math.random()); let flippedCards = []; let matchedCount = 0;
             emojis.forEach((emoji) => {
-                let card = document.createElement('div');
-                card.className = 'mem-card hidden'; card.dataset.emoji = emoji; card.innerText = emoji;
+                let card = document.createElement('div'); card.className = 'mem-card hidden'; card.dataset.emoji = emoji; card.innerText = emoji;
                 card.onclick = function() {
                     if(!this.classList.contains('hidden') || flippedCards.length === 2) return;
                     this.classList.remove('hidden'); flippedCards.push(this);
@@ -554,34 +600,21 @@
                             flippedCards = [];
                         }, 600);
                     }
-                };
-                board.appendChild(card);
+                }; board.appendChild(card);
             });
         }
 
-        // 4. Random Gifts Generator (At least 6)
         function generateRandomGifts() {
             const allGifts = [
-                {name: 'Chocolate', emoji: '🍫'}, {name: 'Ring', emoji: '💍'},
-                {name: 'Teddy', emoji: '🧸'}, {name: 'Ice Cream', emoji: '🍦'},
-                {name: 'Flowers', emoji: '💐'}, {name: 'Coffee', emoji: '☕'},
-                {name: 'Pizza', emoji: '🍕'}, {name: 'Hoodie', emoji: '🧥'},
-                {name: 'Movie Ticket', emoji: '🎟️'}, {name: 'Sneakers', emoji: '👟'}
+                {name: 'Chocolate', emoji: '🍫'}, {name: 'Ring', emoji: '💍'}, {name: 'Teddy', emoji: '🧸'}, 
+                {name: 'Ice Cream', emoji: '🍦'}, {name: 'Flowers', emoji: '💐'}, {name: 'Coffee', emoji: '☕'},
+                {name: 'Pizza', emoji: '🍕'}, {name: 'Hoodie', emoji: '🧥'}, {name: 'Movie Ticket', emoji: '🎟️'}
             ];
-            
-            // Shuffle and pick 6
-            allGifts.sort(() => 0.5 - Math.random());
-            const selectedGifts = allGifts.slice(0, 6);
-            
+            allGifts.sort(() => 0.5 - Math.random()); const selectedGifts = allGifts.slice(0, 6);
             let gridHtml = '';
             selectedGifts.forEach(g => {
-                gridHtml += `
-                <div class="flip-card" onclick="selectGift(this, '${g.name} ${g.emoji}')">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">❓</div>
-                        <div class="flip-card-back">${g.emoji}</div>
-                    </div>
-                </div>`;
+                gridHtml += `<div class="flip-card" onclick="selectGift(this, '${g.name} ${g.emoji}')">
+                    <div class="flip-card-inner"><div class="flip-card-front">❓</div><div class="flip-card-back">${g.emoji}</div></div></div>`;
             });
             document.getElementById('dynamic-gift-grid').innerHTML = gridHtml;
         }
@@ -590,27 +623,18 @@
             if(partnerAnswers.chosenGift !== '') return; 
             element.classList.add('flipped');
             setTimeout(() => {
-                document.querySelectorAll('.flip-card').forEach(item => {
-                    if (item !== element) { item.classList.add('flipped'); item.classList.add('disabled'); }
-                });
-                element.classList.add('selected'); 
-                partnerAnswers.chosenGift = giftName;
+                document.querySelectorAll('.flip-card').forEach(item => { if (item !== element) { item.classList.add('flipped'); item.classList.add('disabled'); }});
+                element.classList.add('selected'); partnerAnswers.chosenGift = giftName;
                 document.getElementById('next-5').style.display = 'inline-block';
             }, 400); 
         }
 
-        // Balloons
         function spawnBalloon() {
             if(document.getElementById('gift-panel').style.display === 'none') return;
-            const b = document.createElement('div'); b.className = 'balloon';
-            b.style.left = Math.random() * 90 + 'vw';
+            const b = document.createElement('div'); b.className = 'balloon'; b.style.left = Math.random() * 90 + 'vw';
             const colors = ['rgba(142,68,173,0.9)', 'rgba(231,76,60,0.9)', 'rgba(46,213,115,0.9)', 'rgba(241, 196, 15, 0.9)'];
             b.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            b.onclick = function() {
-                this.classList.add('pop'); 
-                setTimeout(() => this.remove(), 200);
-            };
+            b.onclick = function() { this.classList.add('pop'); setTimeout(() => this.remove(), 200); };
             document.body.appendChild(b); setTimeout(() => b.remove(), 7000);
         }
 
@@ -618,12 +642,15 @@
             partnerAnswers.note = document.getElementById('her-note').value;
             const btn = document.getElementById('submit-btn');
             btn.innerText = "Sending..."; btn.disabled = true;
+            document.getElementById('her-note').disabled = true; // Lock textarea
+            document.getElementById('back-6').style.display = 'none'; // Prevent backing out during send
             try {
                 await updateDoc(doc(db, "gifts", currentGiftId), { completed: true, answers: partnerAnswers });
                 nextSlide(7);
             } catch (error) {
                 showModal("Oops, couldn't send! Check your internet connection.");
-                btn.innerText = "Send Message"; btn.disabled = false;
+                btn.innerText = "Send Message"; btn.disabled = false; document.getElementById('her-note').disabled = false;
+                document.getElementById('back-6').style.display = 'inline-block';
             }
         }
     </script>
