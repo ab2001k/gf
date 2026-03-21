@@ -12,45 +12,47 @@
             margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #2c3e50; overflow-x: hidden; min-height: 100vh;
             user-select: none; -webkit-user-select: none;
-            transition: background 0.5s ease;
+            transition: background 0.5s ease; position: relative;
         }
         * { box-sizing: border-box; }
 
-        /* 2. Improved Backgrounds */
-        .bg-dashboard {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
+        /* Animated Stars */
+        .star {
+            position: fixed; background: white; border-radius: 50%;
+            animation: twinkle alternate infinite; z-index: 0; pointer-events: none;
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
         }
+        @keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.3); } }
+
+        /* Backgrounds */
+        .bg-dashboard { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; }
         .bg-gift {
             background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite;
         }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
 
         /* --- PANELS & SLIDES --- */
-        .panel { display: none; padding-top: 5vh; padding-bottom: 50px; max-width: 600px; margin: 0 auto; text-align: center; }
+        .panel { display: none; padding-top: 5vh; padding-bottom: 50px; max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; }
         .slide { display: none; animation: fadeInUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
         .slide.active { display: block; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- PREMIUM UI ELEMENTS & 1. DISTINCT CARD SHADES --- */
+        /* --- PREMIUM UI ELEMENTS & CARD SHADES --- */
         .glass-card {
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
             border-radius: 24px; padding: 40px 30px; margin: 20px; 
             box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid rgba(255, 255, 255, 0.8);
             position: relative; overflow: hidden;
         }
-        /* Specific Card Tints */
-        .tint-blue { background: rgba(240, 248, 255, 0.9); }
-        .tint-pink { background: rgba(255, 240, 245, 0.9); }
-        .tint-green { background: rgba(240, 255, 240, 0.9); }
-        .tint-yellow { background: rgba(255, 250, 240, 0.9); }
-        .tint-purple { background: rgba(248, 244, 255, 0.9); }
+        .tint-blue { background: rgba(240, 248, 255, 0.95); }
+        .tint-pink { background: rgba(255, 240, 245, 0.95); }
+        .tint-green { background: rgba(240, 255, 240, 0.95); }
+        .tint-yellow { background: rgba(255, 250, 240, 0.95); }
+        .tint-purple { background: rgba(248, 244, 255, 0.95); }
 
         .bg-dashboard .glass-card { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.2); color: white; }
         .bg-dashboard h2, .bg-dashboard p { color: white !important; }
-
         h2 { color: #8e44ad; font-weight: 600; margin-top: 0; }
         
         button {
@@ -66,33 +68,32 @@
         input[type="text"], textarea, input[type="password"] {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #dcdde1;
             font-size: 1em; margin-bottom: 15px; outline: none; transition: 0.3s;
-            background: #fff; font-family: inherit; color: #2c3e50;
+            background: #fff; font-family: inherit; color: #000; font-weight: 500;
         }
 
-        /* --- 5. COPY WIDGETS --- */
+        /* --- COPY WIDGETS --- */
         .copy-box {
             background: rgba(255, 255, 255, 0.9); border: 1px dashed #bdc3c7; padding: 15px; border-radius: 12px;
             margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
-            text-align: left; word-break: break-all; color: #2c3e50;
+            text-align: left; word-break: break-all; color: #000;
         }
         .copy-box a { color: #3498db; text-decoration: none; font-weight: bold; }
-        .copy-box a:hover { text-decoration: underline; }
-        .copy-btn { margin: 0; padding: 8px 15px; font-size: 0.9em; background: #ecf0f1; color: #2c3e50; border-radius: 8px; display: flex; align-items: center; gap: 5px; }
-        .copy-btn:hover { background: #dcdde1; }
+        .copy-btn { margin: 0; padding: 8px 15px; font-size: 0.9em; background: #ecf0f1; color: #2c3e50; border-radius: 8px; }
 
-        /* --- CUSTOM POPUP --- */
-        #custom-modal {
+        /* --- CUSTOM POPUPS --- */
+        .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
             display: none; align-items: center; justify-content: center; z-index: 1000;
         }
         .modal-content {
             background: white; padding: 40px; border-radius: 24px; text-align: center;
-            max-width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 350px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #000;
         }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* --- VISUAL EFFECTS (Balloons) --- */
+        /* --- BALLOONS --- */
         .balloon {
             width: 50px; height: 60px; background: rgba(231, 76, 60, 0.9);
             border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; position: fixed; bottom: -100px; z-index: 50; cursor: pointer;
@@ -103,20 +104,14 @@
         .balloon.pop { transform: scale(1.8); opacity: 0; }
         @keyframes floatBalloon { to { bottom: 120vh; transform: translateX(30px) rotate(10deg); } }
 
-        /* --- INTERACTIVE SCALES & GAMES --- */
-        input[type=range] { width: 100%; margin: 30px 0; accent-color: #8e44ad; cursor: pointer; }
-        
-        /* 3. Improved Game Card Colors */
+        /* --- GAMES & SLIDERS --- */
+        input[type=range] { width: 100%; margin: 20px 0; accent-color: #8e44ad; cursor: pointer; }
         .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 25px; }
-        .mem-card {
-            background: #fff; border: 2px solid #3498db; height: 75px; border-radius: 12px; display: flex;
-            align-items: center; justify-content: center; font-size: 2em; cursor: pointer;
-            transition: transform 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+        .mem-card { background: #fff; border: 2px solid #3498db; height: 75px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2em; cursor: pointer; transition: transform 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .mem-card.hidden { background: #3498db; color: transparent; border: none; }
 
-        .gift-grid { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
-        .flip-card { background-color: transparent; width: 100px; height: 100px; perspective: 1000px; cursor: pointer; }
+        .gift-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 30px; max-width: 350px; margin-left: auto; margin-right: auto;}
+        .flip-card { background-color: transparent; width: 90px; height: 90px; perspective: 1000px; cursor: pointer; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
         .flip-card.selected .flip-card-inner { transform: rotateY(180deg) scale(1.1); box-shadow: 0 0 25px rgba(46, 213, 115, 0.5); border-radius: 16px; }
@@ -125,42 +120,52 @@
         .flip-card-front { background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: 2px solid white; }
         .flip-card-back { background-color: white; transform: rotateY(180deg); border: 3px solid #ff7eb3;}
 
-        .creator-tag { font-size: 0.85em; margin-top: 30px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 5px; opacity: 0.8;}
-        
-        /* Admin Table */
-        .admin-item { background: white; color: #333; padding: 15px; border-radius: 10px; margin-bottom: 10px; text-align: left; border-left: 5px solid #e74c3c; }
+        /* Admin / Data Reading Area (Black Text for Readability) */
+        .data-text-area { color: #000; font-weight: 500; }
+        .admin-item { background: rgba(255,255,255,0.95); color: #000; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; border-left: 6px solid #e74c3c; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .admin-item strong { color: #8e44ad; }
+        .creator-tag { font-size: 0.85em; margin-top: 30px; font-weight: 500; opacity: 0.6; }
     </style>
 </head>
 <body class="bg-dashboard" oncontextmenu="return false;">
 
-    <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg"></audio>
 
-    <div id="custom-modal">
+    <div id="custom-modal" class="modal-overlay">
         <div class="modal-content">
-            <h3 id="modal-text" style="color: #2c3e50; font-weight: 600;">Message</h3>
+            <h3 id="modal-text" style="font-weight: 700;">Message</h3>
             <button class="btn-primary" onclick="closeModal()">Okay</button>
+        </div>
+    </div>
+
+    <div id="admin-login-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: #8e44ad;">Admin Access</h3>
+            <p style="font-size: 0.9em; color: #555;">Enter developer passcode.</p>
+            <input type="password" id="admin-pwd" placeholder="Password...">
+            <button class="btn-primary" onclick="verifyAdmin()">Login</button>
+            <button class="btn-outline" onclick="closeAdminModal()">Cancel</button>
         </div>
     </div>
 
     <div id="setup-panel" class="panel" style="display: block;">
         <div class="glass-card">
             <h2>Gift Creator Dashboard</h2>
-            <p>Enter her name to generate a unique link.</p>
-            <input type="text" id="gf-name-input" placeholder="Her Name...">
+            <p>Enter their name to generate a unique link.</p>
+            <input type="text" id="gf-name-input" placeholder="Their Name...">
             <button class="btn-primary" id="generate-btn" style="width: 100%;">Create Secret Link</button>
+            
             <div id="link-output" style="margin-top: 25px; display: none;">
                 <div class="copy-box">
-                    <div><small>Her Link (Click to open):</small><br><a href="#" id="generated-url" target="_blank"></a></div>
+                    <div><small>Their Link (Click to open):</small><br><a href="#" id="generated-url" target="_blank"></a></div>
                     <button class="copy-btn" onclick="copyText('generated-url', this)">📋 Copy</button>
                 </div>
                 <div class="copy-box">
-                    <div><small>Secret Code:</small><br><strong id="generated-code" style="color:#e74c3c;"></strong></div>
+                    <div><small>Secret Code:</small><br><strong id="generated-code" style="color:#e74c3c; font-size: 1.2em;"></strong></div>
                     <button class="copy-btn" onclick="copyText('generated-code', this)">🔑 Copy</button>
                 </div>
                 <div class="copy-box">
-                    <div><small>Document ID:</small><br><strong id="generated-id"></strong></div>
+                    <div><small>Document ID:</small><br><strong id="generated-id" style="font-size: 0.8em;"></strong></div>
                     <button class="copy-btn" onclick="copyText('generated-id', this)">🆔 Copy</button>
                 </div>
             </div>
@@ -168,34 +173,34 @@
         
         <div class="glass-card" style="margin-top:20px;">
             <h2>Check Answers</h2>
-            <p>Enter your credentials below.</p>
+            <p>Enter your credentials to see their choices.</p>
             <input type="text" id="check-id" placeholder="Document ID">
             <input type="password" id="check-code" placeholder="Secret Code">
-            <button class="btn-secondary" id="fetch-btn" style="width: 100%;">View Her Answers</button>
-            <div id="answers-output" style="margin-top: 20px; text-align:left;"></div>
+            <button class="btn-secondary" id="fetch-btn" style="width: 100%;">View Answers</button>
+            <div id="answers-output" class="data-text-area" style="margin-top: 20px; text-align:left;"></div>
         </div>
         
-        <p class="creator-tag">Created by Abhik Dutta <span style="cursor:pointer;" onclick="openAdmin()">🔒</span></p>
+        <p class="creator-tag">Created by <span style="cursor:pointer; font-weight: bold; color: #fff;" onclick="triggerAdmin()">Abhik Dutta</span></p>
     </div>
 
     <div id="admin-panel" class="panel">
         <div class="glass-card">
             <h2>Admin Master Panel</h2>
             <p>Viewing all database entries.</p>
-            <div id="admin-list">Loading users...</div>
-            <button class="btn-outline" onclick="location.reload()">Back to Dashboard</button>
+            <div id="admin-list" class="data-text-area">Loading users...</div>
+            <button class="btn-outline" onclick="location.reload()" style="width: 100%;">Exit Admin</button>
         </div>
     </div>
 
     <div id="gift-panel" class="panel">
         
         <div class="slide active" id="slide-1">
-            <div class="glass-card tint-pink" id="q1-card" style="min-height: 250px;">
+            <div class="glass-card tint-pink" id="q1-card" style="min-height: 280px;">
                 <h2 id="top-name">Hey!</h2>
-                <p style="font-size: 1.2em; margin-bottom: 40px;">Do you love me?</p>
-                <div id="btn-container" style="position: relative; height: 60px;">
+                <p style="font-size: 1.2em; margin-bottom: 30px;">Do you love me?</p>
+                <div id="btn-container" style="position: relative; height: 80px; display: flex; justify-content: center; align-items: center; gap: 40px;">
                     <button class="btn-primary" id="btn-yes">Yes</button>
-                    <button class="btn-secondary" id="btn-no" style="position: absolute; left: 50%; transform: translateX(20%);">No</button>
+                    <button class="btn-secondary" id="btn-no" style="position: relative;">No</button>
                 </div>
             </div>
             <button class="btn-outline" id="next-1" style="display:none;" onclick="nextSlide(2)">Continue</button>
@@ -206,15 +211,18 @@
                 <h2>How much do you love me?</h2>
                 <p>Be honest!</p>
                 <input type="range" min="1" max="10" value="5" id="cute-scale">
+                <div id="scale-feedback" style="min-height: 40px; font-weight: bold; color: #8e44ad; font-size: 1.2em;"></div>
             </div>
-            <button class="btn-outline" id="next-2" style="display:none;" onclick="nextSlide(3)">Continue</button>
+            <button class="btn-primary" id="next-2" style="display:none;" onclick="nextSlide(3)">Submit Answer</button>
         </div>
 
         <div class="slide" id="slide-3">
             <div class="glass-card tint-green">
                 <h2>Who loves more?</h2>
-                <button class="btn-primary" onclick="showModal('I knew it! You are the best! 💖'); nextSlide(4);">You</button>
-                <button class="btn-primary" id="prank-btn">Me</button>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+                    <button class="btn-primary" onclick="showModal('I knew it! You are the best! 💖'); nextSlide(4);">You</button>
+                    <button class="btn-primary" id="prank-btn">Me</button>
+                </div>
             </div>
             <button class="btn-outline" id="next-3" style="display:none;" onclick="nextSlide(4)">Continue</button>
         </div>
@@ -232,34 +240,25 @@
             <div class="glass-card tint-purple">
                 <h2>Pick your virtual gift!</h2>
                 <p>Tap a card to reveal. You can only pick ONE!</p>
-                <div class="gift-grid">
-                    <div class="flip-card" onclick="selectGift(this, 'Chocolate 🍫')">
-                        <div class="flip-card-inner"><div class="flip-card-front">❓</div><div class="flip-card-back">🍫</div></div>
+                <div class="gift-grid" id="dynamic-gift-grid">
                     </div>
-                    <div class="flip-card" onclick="selectGift(this, 'Ring 💍')">
-                        <div class="flip-card-inner"><div class="flip-card-front">❓</div><div class="flip-card-back">💍</div></div>
-                    </div>
-                    <div class="flip-card" onclick="selectGift(this, 'Teddy 🧸')">
-                        <div class="flip-card-inner"><div class="flip-card-front">❓</div><div class="flip-card-back">🧸</div></div>
-                    </div>
-                </div>
             </div>
             <button class="btn-outline" id="next-5" style="display:none;" onclick="nextSlide(6)">Continue</button>
         </div>
 
         <div class="slide" id="slide-6">
             <div class="glass-card tint-pink">
-                <h2>Leave me a little note</h2>
+                <h2>Leave a little note</h2>
                 <p id="note-suggestion" style="color:#8e44ad; font-style:italic; min-height: 25px;">Tell me what you love most about us...</p>
                 <textarea id="her-note" rows="4" placeholder="Type here..."></textarea>
             </div>
-            <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Send</button>
+            <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Send Message</button>
         </div>
 
         <div class="slide" id="slide-7">
             <div class="glass-card tint-blue">
-                <h2>All Done!</h2>
-                <p>I received your answers. You are the best thing that ever happened to me. ❤️</p>
+                <h2>All Done! 🎉</h2>
+                <p>I received your answers. You are amazing! ❤️</p>
             </div>
         </div>
 
@@ -267,8 +266,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        // 6. Added getDocs for the Admin Panel
-        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        // Import deleteDoc and getDocs
+        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPS64hiv3GL54t6uI-1I9OURK6_k9olXc",
@@ -284,10 +283,26 @@
         const urlParams = new URLSearchParams(window.location.search);
         const giftId = urlParams.get('id');
 
-        let herAnswers = { lovesMe: false, loveScale: 5, chosenGift: '', note: '' };
+        let partnerAnswers = { lovesMe: false, loveScale: 5, chosenGift: '', note: '' };
         let currentGiftId = giftId;
 
-        // --- Audio Synth (Soft Clicks) ---
+        // --- Animated Stars Generator ---
+        function generateStars() {
+            for(let i=0; i<40; i++){
+                let star = document.createElement('div');
+                star.className = 'star';
+                let size = Math.random() * 4 + 1;
+                star.style.width = size + 'px'; star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                star.style.animationDelay = Math.random() + 's';
+                document.body.appendChild(star);
+            }
+        }
+        generateStars(); // Run on both admin and user sides
+
+        // --- Audio Synth ---
         window.playClick = function() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -299,67 +314,84 @@
                 osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.05);
             } catch(e) {} 
         }
-
         document.addEventListener('click', (e) => {
-            if(e.target.tagName === 'BUTTON' || e.target.classList.contains('balloon') || e.target.closest('.flip-card') || e.target.closest('.mem-card')) { playClick(); }
+            if(e.target.tagName === 'BUTTON' || e.target.classList.contains('balloon') || e.target.closest('.flip-card') || e.target.closest('.mem-card')) playClick();
         });
 
-        // --- Copy Function (Includes Links) ---
+        // --- Utilities ---
         window.copyText = function(elementId, btnElement) {
-            let text = "";
-            const el = document.getElementById(elementId);
-            if(el.tagName === 'A') text = el.href; else text = el.innerText;
-            
+            let text = document.getElementById(elementId).tagName === 'A' ? document.getElementById(elementId).href : document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text);
-            const originalText = btnElement.innerText;
-            btnElement.innerText = "✅ Copied!";
-            btnElement.style.background = "#2ed573"; btnElement.style.color = "white";
-            setTimeout(() => {
-                btnElement.innerText = originalText;
-                btnElement.style.background = "#ecf0f1"; btnElement.style.color = "#2c3e50";
-            }, 2000);
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = "✅ Copied!"; btnElement.style.background = "#2ed573"; btnElement.style.color = "white";
+            setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.background = "#ecf0f1"; btnElement.style.color = "#2c3e50"; }, 2000);
         }
 
-        window.showModal = function(text) {
-            document.getElementById('modal-text').innerText = text;
-            document.getElementById('custom-modal').style.display = 'flex';
-        }
+        window.showModal = function(text) { document.getElementById('modal-text').innerText = text; document.getElementById('custom-modal').style.display = 'flex'; }
         window.closeModal = function() { document.getElementById('custom-modal').style.display = 'none'; }
+        window.closeAdminModal = function() { document.getElementById('admin-login-modal').style.display = 'none'; document.getElementById('admin-pwd').value = ''; }
 
         // ==========================================
-        // 6. ADMIN MASTER PANEL LOGIC
+        // ADMIN / DELETE LOGIC (7 Clicks)
         // ==========================================
-        window.openAdmin = async function() {
-            const pwd = prompt("Enter Admin Password:");
+        let adminClicks = 0; let clickTimer;
+        window.triggerAdmin = function() {
+            adminClicks++; clearTimeout(clickTimer);
+            if(adminClicks === 7) {
+                adminClicks = 0;
+                document.getElementById('admin-login-modal').style.display = 'flex';
+            } else { clickTimer = setTimeout(() => { adminClicks = 0; }, 1000); }
+        }
+
+        window.verifyAdmin = function() {
+            const pwd = document.getElementById('admin-pwd').value;
             if(pwd === "Login@000") {
+                closeAdminModal();
                 document.getElementById('setup-panel').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-                document.body.className = "bg-dashboard";
-                
+                loadAdminData();
+            } else {
+                showModal("Incorrect Password!");
+                document.getElementById('admin-pwd').value = '';
+            }
+        }
+
+        async function loadAdminData() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "gifts"));
+                let html = "";
+                querySnapshot.forEach((doc) => {
+                    const d = doc.data();
+                    html += `
+                    <div class="admin-item" id="entry-${doc.id}">
+                        <button class="btn-secondary" onclick="deleteEntry('${doc.id}', false)" style="float:right; padding: 8px 12px; font-size: 0.8em; margin:0;">🗑️ Delete</button>
+                        <strong>Name:</strong> ${d.name} <br>
+                        <strong>Link Code:</strong> ${doc.id} <br>
+                        <strong>Finished:</strong> ${d.completed ? '✅ Yes' : '⏳ No'}<br>
+                        ${d.completed ? `
+                            <hr style="border:0; border-top:1px solid #ccc; margin: 8px 0;">
+                            <strong>Gift:</strong> ${d.answers.chosenGift} <br>
+                            <strong>Loves me:</strong> ${d.answers.lovesMe ? 'Yes' : 'No'} (Scale: ${d.answers.loveScale}/10)<br>
+                            <strong>Message:</strong> <i>"${d.answers.note}"</i>
+                        ` : ''}
+                    </div>`;
+                });
+                document.getElementById('admin-list').innerHTML = html || "No entries found.";
+            } catch(e) { document.getElementById('admin-list').innerHTML = "Error loading database."; }
+        }
+
+        // Global Delete Function (used by both Admin and Setup Panel)
+        window.deleteEntry = async function(docId, isUserDashboard) {
+            if(confirm("Are you sure you want to permanently delete this data?")) {
                 try {
-                    const querySnapshot = await getDocs(collection(db, "gifts"));
-                    let html = "";
-                    querySnapshot.forEach((doc) => {
-                        const d = doc.data();
-                        html += `
-                        <div class="admin-item">
-                            <strong>Name:</strong> ${d.name} <br>
-                            <strong>Link Code:</strong> ${doc.id} <br>
-                            <strong>Finished:</strong> ${d.completed ? '✅ Yes' : '⏳ No'}<br>
-                            ${d.completed ? `
-                                <hr style="border:0; border-top:1px solid #ccc; margin: 8px 0;">
-                                <strong>Gift:</strong> ${d.answers.chosenGift} <br>
-                                <strong>Loves me:</strong> ${d.answers.lovesMe ? 'Yes' : 'No'} (Scale: ${d.answers.loveScale})<br>
-                                <strong>Message:</strong> <i>"${d.answers.note}"</i>
-                            ` : ''}
-                        </div>`;
-                    });
-                    document.getElementById('admin-list').innerHTML = html || "No users found.";
-                } catch(e) {
-                    document.getElementById('admin-list').innerHTML = "Error loading database: " + e.message;
-                }
-            } else if (pwd !== null) {
-                alert("Incorrect Password!");
+                    await deleteDoc(doc(db, "gifts", docId));
+                    showModal("Data deleted successfully!");
+                    if(isUserDashboard) {
+                        document.getElementById('answers-output').innerHTML = ""; // Clear screen
+                    } else {
+                        document.getElementById('entry-' + docId).remove(); // Remove from admin list
+                    }
+                } catch(e) { showModal("Error deleting data."); }
             }
         }
 
@@ -367,8 +399,8 @@
         // INITIALIZATION
         // ==========================================
         if (giftId) {
-            // HER VIEW
-            document.body.className = "bg-gift"; // Change to animated background
+            // END USER VIEW
+            document.body.className = "bg-gift"; 
             document.getElementById('setup-panel').style.display = 'none';
             
             async function loadGift() {
@@ -379,15 +411,15 @@
                         document.getElementById('top-name').innerText = `Hey ${data.name}!`;
                         document.getElementById('gift-panel').style.display = 'block';
                         initHerInteractions();
-                    } else { showModal("Oops! This link is broken. 💔"); }
-                } catch (e) { showModal("Error loading the gift."); }
+                    } else { showModal("Oops! This link is broken or deleted. 💔"); }
+                } catch (e) { showModal("Error loading the page."); }
             }
             loadGift();
         } else {
-            // DASHBOARD VIEW
+            // CREATOR DASHBOARD VIEW
             document.getElementById('generate-btn').addEventListener('click', async () => {
                 const nameValue = document.getElementById('gf-name-input').value;
-                if (!nameValue) return showModal("Please enter her name!");
+                if (!nameValue) return showModal("Please enter their name!");
                 const secretCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
                 try {
@@ -395,11 +427,12 @@
                     const link = window.location.href.split('?')[0] + "?id=" + docRef.id;
                     
                     const urlEl = document.getElementById('generated-url');
-                    urlEl.innerText = link; urlEl.href = link; // Make it clickable
+                    urlEl.innerText = link; urlEl.href = link; 
                     document.getElementById('generated-code').innerText = secretCode;
                     document.getElementById('generated-id').innerText = docRef.id;
                     document.getElementById('link-output').style.display = 'block';
-                } catch (e) { showModal("Error saving data! Check rules."); }
+                    document.getElementById('gf-name-input').value = '';
+                } catch (e) { showModal("Error saving data! Check database rules."); }
             });
 
             document.getElementById('fetch-btn').addEventListener('click', async () => {
@@ -411,24 +444,26 @@
                     const docSnap = await getDoc(doc(db, "gifts", id));
                     if (docSnap.exists() && docSnap.data().creatorCode === codeInput) {
                         const data = docSnap.data();
-                        if(!data.completed) return showModal("She hasn't finished it yet!");
+                        if(!data.completed) return showModal("They haven't finished answering yet!");
                         
                         let ans = data.answers;
                         document.getElementById('answers-output').innerHTML = `
-                            <div class="admin-item">
+                            <div class="admin-item" style="color:#000;">
                                 <p><strong>Loves You?</strong> ${ans.lovesMe ? 'YES!' : 'No'}</p>
                                 <p><strong>Love Scale (1-10):</strong> ${ans.loveScale}</p>
                                 <p><strong>Chosen Gift:</strong> ${ans.chosenGift}</p>
-                                <p><strong>Her Note:</strong> "${ans.note}"</p>
+                                <p><strong>Their Note:</strong> "${ans.note}"</p>
+                                <hr style="border:0; border-top:1px solid #ccc; margin: 15px 0;">
+                                <button class="btn-secondary" onclick="deleteEntry('${id}', true)" style="width:100%; font-size:1em;">🗑️ Delete This Link Data</button>
                             </div>
                         `;
-                    } else { showModal("Invalid ID or Secret Code."); }
+                    } else { showModal("Invalid Document ID or Secret Code."); }
                 } catch (e) { showModal("Error fetching data."); }
             });
         }
 
         // ==========================================
-        // HER INTERACTIONS
+        // END USER INTERACTIONS
         // ==========================================
         window.nextSlide = function(num) {
             document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
@@ -442,41 +477,51 @@
             }, {once:true});
             setInterval(spawnBalloon, 2000);
 
+            // 1. Spaced Out Yes/No Dodge Logic
             const yesBtn = document.getElementById('btn-yes'); const noBtn = document.getElementById('btn-no');
             const btnContainer = document.getElementById('btn-container');
             
             yesBtn.addEventListener('click', () => {
-                herAnswers.lovesMe = true; showModal('I love you more! Now click Continue.');
+                partnerAnswers.lovesMe = true; showModal('I love you more! Now click Continue.');
                 document.getElementById('next-1').style.display = 'inline-block';
-                noBtn.style.left = '50%'; noBtn.style.top = '0'; noBtn.style.transform = 'translateX(20%)';
+                noBtn.style.position = 'relative'; noBtn.style.left = '0'; noBtn.style.top = '0'; // Snap back
                 noBtn.onclick = () => showModal("Too late! You already said YES!");
                 noBtn.onmouseover = null; 
             });
 
             const moveNoBtn = () => {
-                if(herAnswers.lovesMe) return;
+                if(partnerAnswers.lovesMe) return;
                 const maxX = btnContainer.offsetWidth - noBtn.offsetWidth;
-                const maxY = 150; 
+                const maxY = 180; 
                 const x = Math.random() * maxX; const y = (Math.random() * maxY) - (maxY/2); 
-                noBtn.style.position = 'absolute'; noBtn.style.left = `${x}px`; noBtn.style.top = `${y}px`; noBtn.style.transform = 'none';
+                noBtn.style.position = 'absolute'; noBtn.style.left = `${x}px`; noBtn.style.top = `${y}px`;
             };
             noBtn.onmouseover = moveNoBtn; noBtn.ontouchstart = (e) => { e.preventDefault(); moveNoBtn(); };
 
+            // 2. Instant Submit Slider Logic
             document.getElementById('cute-scale').addEventListener('input', (e) => {
-                herAnswers.loveScale = e.target.value;
-                if (e.target.value == 10) {
-                    document.getElementById('scale-card').innerHTML = "<h2 style='color:#e74c3c;'>INFINITY! 💥</h2><p>You maxed it out! I love you too!</p>";
-                    document.getElementById('next-2').style.display = 'inline-block';
-                }
+                const val = e.target.value;
+                partnerAnswers.loveScale = val;
+                let msg = "";
+                if(val < 4) msg = "Ouch... just " + val + "? 😢";
+                else if(val < 8) msg = "I'll take a " + val + "! 😊";
+                else if(val < 10) msg = "A solid " + val + "! 🥰";
+                else msg = "<span style='color:#e74c3c;'>INFINITY! 💥</span>";
+                
+                document.getElementById('scale-feedback').innerHTML = msg;
+                document.getElementById('next-2').style.display = 'inline-block';
             });
 
+            // 3. Prank Button Logic
             document.getElementById('prank-btn').addEventListener('click', function() {
                 this.innerText = 'Actually, YOU!'; this.style.backgroundColor = '#e74c3c';
                 setTimeout(() => { showModal('Gotcha! You just admitted I love you more!'); document.getElementById('next-3').style.display = 'inline-block'; }, 100);
             });
 
             initMemoryGame();
+            generateRandomGifts();
 
+            // Note Suggestions
             const suggestions = ["Tell me what you love most about us...", "What's your favorite memory of us?", "Write a tiny love letter here..."];
             let sugIdx = 0;
             setInterval(() => {
@@ -514,20 +559,47 @@
             });
         }
 
+        // 4. Random Gifts Generator (At least 6)
+        function generateRandomGifts() {
+            const allGifts = [
+                {name: 'Chocolate', emoji: '🍫'}, {name: 'Ring', emoji: '💍'},
+                {name: 'Teddy', emoji: '🧸'}, {name: 'Ice Cream', emoji: '🍦'},
+                {name: 'Flowers', emoji: '💐'}, {name: 'Coffee', emoji: '☕'},
+                {name: 'Pizza', emoji: '🍕'}, {name: 'Hoodie', emoji: '🧥'},
+                {name: 'Movie Ticket', emoji: '🎟️'}, {name: 'Sneakers', emoji: '👟'}
+            ];
+            
+            // Shuffle and pick 6
+            allGifts.sort(() => 0.5 - Math.random());
+            const selectedGifts = allGifts.slice(0, 6);
+            
+            let gridHtml = '';
+            selectedGifts.forEach(g => {
+                gridHtml += `
+                <div class="flip-card" onclick="selectGift(this, '${g.name} ${g.emoji}')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">❓</div>
+                        <div class="flip-card-back">${g.emoji}</div>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('dynamic-gift-grid').innerHTML = gridHtml;
+        }
+
         window.selectGift = function(element, giftName) {
-            if(herAnswers.chosenGift !== '') return; 
+            if(partnerAnswers.chosenGift !== '') return; 
             element.classList.add('flipped');
             setTimeout(() => {
                 document.querySelectorAll('.flip-card').forEach(item => {
                     if (item !== element) { item.classList.add('flipped'); item.classList.add('disabled'); }
                 });
                 element.classList.add('selected'); 
-                herAnswers.chosenGift = giftName;
+                partnerAnswers.chosenGift = giftName;
                 document.getElementById('next-5').style.display = 'inline-block';
             }, 400); 
         }
 
-        // 1. Balloon Pop Visuals
+        // Balloons
         function spawnBalloon() {
             if(document.getElementById('gift-panel').style.display === 'none') return;
             const b = document.createElement('div'); b.className = 'balloon';
@@ -536,22 +608,22 @@
             b.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             
             b.onclick = function() {
-                this.classList.add('pop'); // Triggers the CSS scale & fade
+                this.classList.add('pop'); 
                 setTimeout(() => this.remove(), 200);
             };
             document.body.appendChild(b); setTimeout(() => b.remove(), 7000);
         }
 
         window.submitAnswers = async function() {
-            herAnswers.note = document.getElementById('her-note').value;
+            partnerAnswers.note = document.getElementById('her-note').value;
             const btn = document.getElementById('submit-btn');
             btn.innerText = "Sending..."; btn.disabled = true;
             try {
-                await updateDoc(doc(db, "gifts", currentGiftId), { completed: true, answers: herAnswers });
+                await updateDoc(doc(db, "gifts", currentGiftId), { completed: true, answers: partnerAnswers });
                 nextSlide(7);
             } catch (error) {
                 showModal("Oops, couldn't send! Check your internet connection.");
-                btn.innerText = "Send"; btn.disabled = false;
+                btn.innerText = "Send Message"; btn.disabled = false;
             }
         }
     </script>
