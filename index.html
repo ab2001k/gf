@@ -5,261 +5,459 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You ❤️</title>
     <style>
+        /* --- GLOBAL & ANTI-COPY --- */
         body {
-            margin: 0; padding: 0; font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            text-align: center; overflow-x: hidden; min-height: 100vh;
+            color: #333; overflow-x: hidden; min-height: 100vh;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none;
         }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-bottom: 100px; }
+        * { box-sizing: border-box; }
+
+        /* --- STICKY GLITTER HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; text-align: center;
+            padding: 15px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px);
+            z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .glitter-name {
+            font-size: 2.5em; font-weight: 800; margin: 0;
+            background: linear-gradient(to right, #ff0055, #ff6b81, #ff007f, #ff0055);
+            background-size: 200% auto; color: transparent;
+            -webkit-background-clip: text; background-clip: text;
+            animation: shine 3s linear infinite;
+            text-shadow: 0px 0px 10px rgba(255, 0, 85, 0.3);
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        /* --- PANELS & SLIDES --- */
+        .panel { display: none; padding-top: 100px; padding-bottom: 50px; max-width: 600px; margin: 0 auto; text-align: center; }
+        .slide { display: none; animation: fadeInUp 0.6s ease; }
+        .slide.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- PREMIUM UI ELEMENTS --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            border-radius: 20px; padding: 30px; margin: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        button {
+            font-size: 1.1em; padding: 12px 25px; margin: 10px; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: bold; transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-primary { background: #ff4757; color: white; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4); }
+        .btn-secondary { background: #2ed573; color: white; }
+        .btn-outline { background: transparent; border: 2px solid #ff4757; color: #ff4757; }
+        input[type="text"], textarea {
+            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #ffb8b8;
+            font-size: 1em; margin-bottom: 15px; outline: none; transition: 0.3s;
+            background: rgba(255,255,255,0.9); font-family: inherit;
+        }
+        input[type="text"]:focus, textarea:focus { border-color: #ff4757; }
+
+        /* --- CUSTOM POPUP (Matches Design) --- */
+        #custom-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 20px; text-align: center;
+            max-width: 350px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popIn 0.3s;
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* --- REALISTIC BALLOONS --- */
+        .balloon {
+            width: 50px; height: 65px; background: rgba(255, 71, 87, 0.8);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: fixed; bottom: -100px; z-index: 50; cursor: pointer;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+            animation: floatUp linear forwards; transition: transform 0.1s;
+        }
+        .balloon::before { /* The tie */
+            content: ""; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid rgba(255, 71, 87, 0.8);
+        }
+        .balloon::after { /* The string */
+            content: ""; position: absolute; bottom: -58px; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 50px; background: rgba(0,0,0,0.2);
+        }
+        @keyframes floatUp { to { bottom: 120vh; } }
+
+        /* --- MEMORY GAME --- */
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+        .mem-card {
+            background: #ffeaa7; height: 70px; border-radius: 10px; display: flex;
+            align-items: center; justify-content: center; font-size: 2em; cursor: pointer;
+            transition: transform 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .mem-card.hidden { background: #ff7675; color: transparent; }
         
-        /* Animated Name */
-        h1.magic-name {
-            font-size: 3em;
-            background: linear-gradient(to right, #ff0055, #ff0000, #ff007f, #ff0055);
-            -webkit-background-clip: text; color: transparent;
-            animation: rainbow 3s infinite linear;
+        /* --- GIFT SELECTION --- */
+        .gift-grid { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .gift-item {
+            font-size: 3em; padding: 20px; background: white; border-radius: 15px; cursor: pointer;
+            transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        @keyframes rainbow { 0% { background-position: 0vw; } 100% { background-position: 100vw; } }
+        .gift-item.selected { background: #2ed573; transform: scale(1.1); }
+        .gift-item.disabled { opacity: 0.4; pointer-events: none; filter: grayscale(100%); }
 
-        /* General UI Elements */
-        .card { background: white; border-radius: 20px; padding: 20px; margin: 20px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        button { font-size: 1.2em; padding: 10px 20px; margin: 10px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
-        .btn-yes { background-color: #4CAF50; color: white; }
-        .btn-yes:hover { transform: scale(1.1); }
-        .btn-no { background-color: #f44336; color: white; position: relative; transition: all 0.3s ease; }
-        .btn-prank { background-color: #2196F3; color: white; }
-        input[type="text"] { font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #ff9a9e; width: 80%; text-align: center; margin-bottom: 15px;}
+        /* BRANDING */
+        .creator-tag { font-size: 0.8em; color: gray; margin-top: 20px; }
 
-        /* Exploding Slider */
-        input[type=range] { width: 100%; margin: 20px 0; }
-        .explosion { font-size: 2em; color: #ff0055; font-weight: bold; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1.5); opacity: 1; } }
-
-        /* Flip Cards */
-        .gifts-grid { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
-        .flip-card { background-color: transparent; width: 100px; height: 100px; perspective: 1000px; margin: 10px; cursor: pointer; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 3em; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .flip-card-front { background-color: #ffb6c1; color: white; }
-        .flip-card-back { background-color: white; transform: rotateY(180deg); }
-
-        /* Floating Balloons */
-        .balloon { position: fixed; font-size: 3em; cursor: pointer; user-select: none; transition: transform 0.1s; z-index: 50;}
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <div id="setup-screen" style="display: none; padding: 40px; background: white; border-radius: 20px; max-width: 400px; margin: 50px auto; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; z-index: 100;">
-        <h2>Create Her Gift 💝</h2>
-        <p>Enter her name to generate a unique, secure link.</p>
-        <input type="text" id="gf-name-input" placeholder="Enter her name...">
-        <button class="btn-yes" id="generate-btn" style="width: 100%;">Generate Secret Link</button>
-        <div id="link-output" style="margin-top: 20px; font-weight: bold; word-wrap: break-word;"></div>
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="header">
+        <h1 class="glitter-name" id="top-name">For You ❤️</h1>
     </div>
 
-    <div id="gift-screen" class="container" style="display: none;">
+    <div id="custom-modal">
+        <div class="modal-content">
+            <h3 id="modal-text">Message</h3>
+            <button class="btn-primary" onclick="closeModal()">Okay</button>
+        </div>
+    </div>
+
+    <div id="setup-panel" class="panel">
+        <div class="glass-card">
+            <h2>Gift Creator Dashboard 🛠️</h2>
+            <p>Enter her name to generate a unique, secure link.</p>
+            <input type="text" id="gf-name-input" placeholder="Her Name...">
+            <button class="btn-primary" id="generate-btn" style="width: 100%;">Create Secret Link</button>
+            <div id="link-output" style="margin-top: 20px;"></div>
+        </div>
         
-        <div id="balloon-container"></div>
+        <div class="glass-card" style="margin-top:20px;">
+            <h2>Check Answers 🕵️‍♂️</h2>
+            <p>Enter the Secret Code and Document ID below to see her choices.</p>
+            <input type="text" id="check-id" placeholder="Document ID (from the link)">
+            <input type="text" id="check-code" placeholder="Secret Code">
+            <button class="btn-secondary" id="fetch-btn" style="width: 100%;">View Her Answers</button>
+            <div id="answers-output" style="margin-top: 20px; text-align:left;"></div>
+        </div>
+        <p class="creator-tag">Created by Abhik Dutta</p>
+    </div>
 
-        <h1 class="magic-name" id="display-name">Hey Beautiful! ❤️</h1>
-        <p>I made this just for you...</p>
-
-        <div class="card">
-            <h2>Do you love me?</h2>
-            <button class="btn-yes" onclick="alert('I love you more! ❤️')">Big YES!</button>
-            <button class="btn-no" id="runaway-btn">Huh, No</button>
+    <div id="gift-panel" class="panel">
+        
+        <div class="slide active" id="slide-1">
+            <div class="glass-card">
+                <h2 id="q1-title">Do you love me?</h2>
+                <button class="btn-secondary" id="btn-yes">Big YES!</button>
+                <button class="btn-primary" id="btn-no" style="position:relative;">Huh, No</button>
+            </div>
+            <button class="btn-outline" id="next-1" style="display:none;" onclick="nextSlide(2)">Next ➡️</button>
         </div>
 
-        <div class="card" id="scale-card">
-            <h2>On a scale of 1–10, how cute am I? 😉</h2>
-            <input type="range" min="1" max="10" value="5" id="cute-scale">
-            <p>Slide to the right!</p>
+        <div class="slide" id="slide-2">
+            <div class="glass-card">
+                <h2>Let's play a game! 🧩</h2>
+                <p>Match the pairs to prove we are a perfect match!</p>
+                <div class="memory-grid" id="memory-board"></div>
+            </div>
+            <button class="btn-outline" id="next-2" style="display:none;" onclick="nextSlide(3)">Next ➡️</button>
         </div>
 
-        <div class="card">
-            <h2>Who loves more? Be honest 😜</h2>
-            <button class="btn-prank" onclick="alert('I knew it! You are the best! 💖')">You</button>
-            <button class="btn-prank" id="prank-btn">Me</button>
-        </div>
-
-        <div class="card">
-            <h2>What new nickname should I give you?</h2>
-            <input type="text" placeholder="Type here...">
-            <br>
-            <button class="btn-yes" onclick="alert('Aww, I love it! 🥰')">Submit</button>
-        </div>
-
-        <div class="card">
-            <h2>Pick a card for a virtual gift! 🎁</h2>
-            <p>(Tap to flip)</p>
-            <div class="gifts-grid">
-                <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">❓</div>
-                        <div class="flip-card-back">🍫</div>
-                    </div>
-                </div>
-                <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">❓</div>
-                        <div class="flip-card-back">💍</div>
-                    </div>
-                </div>
-                <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">❓</div>
-                        <div class="flip-card-back">🧸</div>
-                    </div>
+        <div class="slide" id="slide-3">
+            <div class="glass-card">
+                <h2>Pick your virtual gift! 🎁</h2>
+                <p>You can only pick ONE. Choose wisely!</p>
+                <div class="gift-grid">
+                    <div class="gift-item" onclick="selectGift(this, 'Chocolate 🍫')">🍫</div>
+                    <div class="gift-item" onclick="selectGift(this, 'Ring 💍')">💍</div>
+                    <div class="gift-item" onclick="selectGift(this, 'Teddy 🧸')">🧸</div>
                 </div>
             </div>
+            <button class="btn-outline" id="next-3" style="display:none;" onclick="nextSlide(4)">Next ➡️</button>
         </div>
+
+        <div class="slide" id="slide-4">
+            <div class="glass-card">
+                <h2>Leave me a little note 📝</h2>
+                <p id="note-suggestion" style="color:#ff4757; font-style:italic; min-height: 25px;">Tell me what you love most about us...</p>
+                <textarea id="her-note" rows="4" placeholder="Type your sweet words here..."></textarea>
+            </div>
+            <button class="btn-primary" id="submit-btn" onclick="submitAnswers()">Send to My Heart 💖</button>
+        </div>
+
+        <div class="slide" id="slide-5">
+            <div class="glass-card">
+                <h2>All Done! 🎉</h2>
+                <p>I received your answers. You are the best thing that ever happened to me. ❤️</p>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
-        // 1. Import Firebase using your specified version (12.11.0)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
-        import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-        // 2. Your specific Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAPS64hiv3GL54t6uI-1I9OURK6_k9olXc",
             authDomain: "lovegiftweb.firebaseapp.com",
             projectId: "lovegiftweb",
             storageBucket: "lovegiftweb.firebasestorage.app",
             messagingSenderId: "1011473402609",
-            appId: "1:1011473402609:web:25384ca95d7e2fb17b7750",
-            measurementId: "G-ZDDSWQMHCL"
+            appId: "1:1011473402609:web:25384ca95d7e2fb17b7750"
         };
 
-        // 3. Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        // 4. Check URL for the secret ID
         const urlParams = new URLSearchParams(window.location.search);
         const giftId = urlParams.get('id');
 
-        const setupScreen = document.getElementById('setup-screen');
-        const giftScreen = document.getElementById('gift-screen');
+        // Global State for her answers
+        let herAnswers = { lovesMe: false, matchedGame: false, chosenGift: '', note: '' };
+        let currentGiftId = giftId;
 
+        // UI Elements
+        const setupPanel = document.getElementById('setup-panel');
+        const giftPanel = document.getElementById('gift-panel');
+
+        // --- Custom Modal Function ---
+        window.showModal = function(text) {
+            document.getElementById('modal-text').innerText = text;
+            document.getElementById('custom-modal').style.display = 'flex';
+        }
+        window.closeModal = function() {
+            document.getElementById('custom-modal').style.display = 'none';
+        }
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
         if (giftId) {
-            // --- VIEW MODE (For Her) ---
-            setupScreen.style.display = 'none';
-            
+            // HER VIEW
+            setupPanel.style.display = 'none';
             async function loadGift() {
                 try {
-                    const docRef = doc(db, "gifts", giftId);
-                    const docSnap = await getDoc(docRef);
-
+                    const docSnap = await getDoc(doc(db, "gifts", giftId));
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        document.getElementById('display-name').innerText = `Hey ${data.name}! ❤️`;
-                        giftScreen.style.display = 'block'; 
-                        
-                        // Start the fun animations only when her screen loads
-                        initInteractiveFeatures();
+                        document.getElementById('top-name').innerText = `Hey ${data.name}! ❤️`;
+                        giftPanel.style.display = 'block';
+                        initHerInteractions();
                     } else {
-                        document.body.innerHTML = "<h1 style='margin-top:20vh;'>Oops! This link is broken or expired. 💔</h1>";
+                        showModal("Oops! This link is broken. 💔");
                     }
-                } catch (e) {
-                    console.error("Error loading document:", e);
-                    document.body.innerHTML = "<h1 style='margin-top:20vh;'>Error loading the gift. Please make sure Firebase permissions allow reading!</h1>";
-                }
+                } catch (e) { showModal("Error loading the gift."); }
             }
             loadGift();
-
         } else {
-            // --- SETUP MODE (For You) ---
-            setupScreen.style.display = 'block';
-            giftScreen.style.display = 'none';
+            // ABHIK'S DASHBOARD VIEW
+            setupPanel.style.display = 'block';
+            giftPanel.style.display = 'none';
 
+            // Generate Link & Secret Code
             document.getElementById('generate-btn').addEventListener('click', async () => {
                 const nameValue = document.getElementById('gf-name-input').value;
-                if (!nameValue) return alert("Please enter her name!");
+                if (!nameValue) return showModal("Please enter her name!");
 
-                const btn = document.getElementById('generate-btn');
-                btn.innerText = "Generating...";
-                btn.disabled = true;
+                const secretCode = Math.random().toString(36).substring(2, 8).toUpperCase(); // Random 6 char code
 
                 try {
-                    // Save data to Firebase
                     const docRef = await addDoc(collection(db, "gifts"), {
-                        name: nameValue,
-                        createdAt: new Date()
+                        name: nameValue, creatorCode: secretCode, completed: false, answers: {}
                     });
-
-                    // Create the link
-                    const shareableLink = window.location.href.split('?')[0] + "?id=" + docRef.id;
+                    const link = window.location.href.split('?')[0] + "?id=" + docRef.id;
+                    
                     document.getElementById('link-output').innerHTML = `
-                        <div style="padding: 15px; background: #e8f5e9; border: 1px solid #4CAF50; border-radius: 10px;">
-                            Here is your secure link:<br><br>
-                            <a href="${shareableLink}" target="_blank" style="color: #4CAF50;">${shareableLink}</a>
-                            <br><br><span style="font-size: 0.8em; color: #333;">Copy this and send it to her!</span>
+                        <div style="background:#e8f5e9; padding:15px; border-radius:10px;">
+                            <strong>Her Link:</strong><br><a href="${link}" target="_blank">${link}</a><br><br>
+                            <strong style="color:red;">YOUR SECRET CODE: ${secretCode}</strong><br>
+                            <strong style="color:red;">DOCUMENT ID: ${docRef.id}</strong><br>
+                            <small>⚠️ Save these! You need them to check her answers below.</small>
                         </div>
                     `;
-                    btn.innerText = "Generate Secret Link";
-                    btn.disabled = false;
-                    document.getElementById('gf-name-input').value = ""; // Clear input
-                } catch (e) {
-                    console.error("Error adding document: ", e);
-                    alert("Error saving data! Check your Firebase Firestore security rules.");
-                    btn.innerText = "Try Again";
-                    btn.disabled = false;
-                }
+                } catch (e) { showModal("Error saving data!"); }
+            });
+
+            // Fetch Answers
+            document.getElementById('fetch-btn').addEventListener('click', async () => {
+                const id = document.getElementById('check-id').value;
+                const code = document.getElementById('check-check').value; // Typo fix: 'check-code'
+                const codeInput = document.getElementById('check-code').value;
+                if(!id || !codeInput) return showModal("Need both ID and Code!");
+
+                try {
+                    const docSnap = await getDoc(doc(db, "gifts", id));
+                    if (docSnap.exists() && docSnap.data().creatorCode === codeInput) {
+                        const data = docSnap.data();
+                        if(!data.completed) return showModal("She hasn't finished it yet!");
+                        
+                        let ans = data.answers;
+                        document.getElementById('answers-output').innerHTML = `
+                            <div class="glass-card" style="background:#fff;">
+                                <p><strong>Loves You?</strong> ${ans.lovesMe ? 'YES!' : 'No (Wait, how?)'}</p>
+                                <p><strong>Chosen Gift:</strong> ${ans.chosenGift}</p>
+                                <p><strong>Her Note:</strong> "${ans.note}"</p>
+                            </div>
+                        `;
+                    } else { showModal("Invalid ID or Secret Code."); }
+                } catch (e) { showModal("Error fetching data."); }
             });
         }
 
         // ==========================================
-        // ALL THE FUN ANIMATIONS & INTERACTIONS
+        // HER INTERACTIONS & SLIDE LOGIC
         // ==========================================
-        function initInteractiveFeatures() {
+        window.nextSlide = function(num) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById('slide-' + num).classList.add('active');
+        }
+
+        function initHerInteractions() {
+            // 0. Audio & Balloons start on first interaction
+            document.body.addEventListener('click', () => {
+                document.getElementById('bg-music').play().catch(e=>console.log("Audio autoplay prevented"));
+            }, {once:true});
+            setInterval(spawnBalloon, 2000);
+
             // 1. Runaway Button Logic
-            const noBtn = document.getElementById('runaway-btn');
-            const moveButton = () => {
-                const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40);
-                const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40);
+            const yesBtn = document.getElementById('btn-yes');
+            const noBtn = document.getElementById('btn-no');
+            
+            yesBtn.addEventListener('click', () => {
+                herAnswers.lovesMe = true;
+                showModal('I love you more! ❤️ Now click Next!');
+                document.getElementById('next-1').style.display = 'inline-block';
+                // Reset No button & disable it
+                noBtn.style.position = 'relative';
+                noBtn.style.left = 'auto'; noBtn.style.top = 'auto';
+                noBtn.onclick = () => showModal("Too late! You already said YES! 😜 No take-backs!");
+                noBtn.onmouseover = null; 
+            });
+
+            const moveNoBtn = () => {
+                if(herAnswers.lovesMe) return; // Stop moving if she already clicked yes
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 100);
                 noBtn.style.position = 'fixed';
-                noBtn.style.left = `${Math.abs(x)}px`;
-                noBtn.style.top = `${Math.abs(y)}px`;
+                noBtn.style.left = `${Math.abs(x)}px`; noBtn.style.top = `${Math.abs(y)}px`;
             };
-            noBtn.addEventListener('mouseover', moveButton);
-            noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+            noBtn.onmouseover = moveNoBtn;
+            noBtn.ontouchstart = (e) => { e.preventDefault(); moveNoBtn(); };
 
-            // 2. Exploding Cute Scale
-            const scale = document.getElementById('cute-scale');
-            const scaleCard = document.getElementById('scale-card');
-            scale.addEventListener('input', (e) => {
-                if (e.target.value == 10) {
-                    scaleCard.innerHTML = "<div class='explosion'>💥 INFINITY! LOVE OVERLOAD! 💥<br>I know I'm cute, but you are cuter!</div>";
-                }
-            });
+            // 2. Memory Game Logic
+            initMemoryGame();
 
-            // 3. Prank Button Logic
-            const prankBtn = document.getElementById('prank-btn');
-            prankBtn.addEventListener('click', function() {
-                this.innerText = 'Actually, YOU!';
-                this.style.backgroundColor = '#ff0055';
-                setTimeout(() => alert('Aha! Gotcha! You just admitted I love you more! 😘'), 100);
-            });
+            // 4. Changing Note Suggestions
+            const suggestions = [
+                "Tell me what you love most about us...",
+                "What's your favorite memory of us?",
+                "Write a tiny love letter here...",
+                "What made you smile today?"
+            ];
+            let sugIdx = 0;
+            setInterval(() => {
+                sugIdx = (sugIdx + 1) % suggestions.length;
+                document.getElementById('note-suggestion').innerText = suggestions[sugIdx];
+            }, 3000);
+        }
 
-            // 4. Clickable Floating Balloons
-            const createBalloon = () => {
-                const balloon = document.createElement('div');
-                balloon.innerHTML = ['🎈', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
-                balloon.className = 'balloon';
-                balloon.style.left = Math.random() * 90 + 'vw';
-                balloon.style.top = Math.random() * 90 + 'vh';
+        // Memory Game Implementation
+        function initMemoryGame() {
+            const board = document.getElementById('memory-board');
+            let emojis = ['🍎', '🍎', '🐶', '🐶', '🚗', '🚗', '🎈', '🎈'];
+            emojis.sort(() => 0.5 - Math.random()); // Shuffle
+            
+            let flippedCards = [];
+            let matchedCount = 0;
+
+            emojis.forEach((emoji, index) => {
+                let card = document.createElement('div');
+                card.className = 'mem-card hidden';
+                card.dataset.emoji = emoji;
+                card.innerText = emoji;
                 
-                balloon.addEventListener('click', function() {
-                    this.style.transform = 'scale(0)';
-                    setTimeout(() => this.remove(), 100);
-                });
-                document.getElementById('balloon-container').appendChild(balloon);
+                card.onclick = function() {
+                    if(!this.classList.contains('hidden') || flippedCards.length === 2) return;
+                    
+                    this.classList.remove('hidden');
+                    flippedCards.push(this);
+
+                    if(flippedCards.length === 2) {
+                        setTimeout(() => {
+                            if(flippedCards[0].dataset.emoji === flippedCards[1].dataset.emoji) {
+                                matchedCount += 2;
+                                if(matchedCount === emojis.length) {
+                                    showModal("You won! We are a perfect match! 💖");
+                                    document.getElementById('next-2').style.display = 'inline-block';
+                                }
+                            } else {
+                                flippedCards[0].classList.add('hidden');
+                                flippedCards[1].classList.add('hidden');
+                            }
+                            flippedCards = [];
+                        }, 800);
+                    }
+                };
+                board.appendChild(card);
+            });
+        }
+
+        // Gift Selection
+        window.selectGift = function(element, giftName) {
+            document.querySelectorAll('.gift-item').forEach(item => {
+                item.classList.remove('selected');
+                item.classList.add('disabled'); // Flip others
+            });
+            element.classList.remove('disabled');
+            element.classList.add('selected');
+            herAnswers.chosenGift = giftName;
+            document.getElementById('next-3').style.display = 'inline-block';
+        }
+
+        // Balloon Spawner
+        function spawnBalloon() {
+            if(document.getElementById('gift-panel').style.display === 'none') return;
+            const b = document.createElement('div');
+            b.className = 'balloon';
+            b.style.left = Math.random() * 90 + 'vw';
+            const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff'];
+            b.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Pop effect
+            b.onclick = function() {
+                this.style.transform = 'scale(1.5)';
+                this.style.opacity = '0';
+                setTimeout(() => this.remove(), 200);
             };
-            for(let i=0; i<15; i++) createBalloon();
+            document.body.appendChild(b);
+            setTimeout(() => b.remove(), 8000); // Clean up
+        }
+
+        // Final Submission to Firebase
+        window.submitAnswers = async function() {
+            herAnswers.note = document.getElementById('her-note').value;
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Sending... 💌";
+            btn.disabled = true;
+
+            try {
+                await updateDoc(doc(db, "gifts", currentGiftId), {
+                    completed: true,
+                    answers: herAnswers
+                });
+                nextSlide(5); // Show Thank You
+            } catch (error) {
+                showModal("Oops, couldn't send! Make sure you are connected to the internet.");
+                btn.innerText = "Try Again";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
